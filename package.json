@@ -3,13 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.4",
+    "@mui/material": "^5.2.4",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.24.0",
+    "google-finance": "^0.1.12",
+    "moment": "^2.29.1",
+    "plotly.js": "^2.8.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-native": "^0.66.4",
+    "react-plotly.js": "^2.5.1",
+    "react-router": "^6.2.0",
+    "react-router-dom": "^6.2.0",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "yahoo-finance": "^0.3.7"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,0 +1,10 @@
+.Portfolio {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.Portfolio-item {
+    border: solid black;
+    border-width: 2px;
+    margin: 5px;
+}
