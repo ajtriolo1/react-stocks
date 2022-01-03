@@ -1,7 +1,6 @@
 import createDataContext from "./createDataContext";
 import stocksApi from '../api/stocks';
 import StockChart from "../components/StockChart";
-import moment from "moment";
 
 const stockReducer = (state, action) => {
     switch(action.type){

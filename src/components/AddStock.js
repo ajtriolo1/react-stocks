@@ -4,7 +4,7 @@ import { Context as StockContext } from '../context/StockContext';
 
 const AddStock = () => {
     const [term, setTerm] = useState('');
-    const {state:{chartList, tickerList}, addStock, fetchList} = useContext(StockContext);
+    const {state:{tickerList}, addStock, fetchList} = useContext(StockContext);
 
     const onAddClick = async (term) => {
         if(tickerList.includes(term)){
@@ -16,6 +16,7 @@ const AddStock = () => {
             await addStock(term);
             setTerm('');
             fetchList();
+            handleScroll();
         }
     }
 
@@ -45,7 +46,6 @@ const AddStock = () => {
                     size="medium" 
                     onClick={() => {
                         onAddClick(term);
-                        handleScroll();
                     }}
                 >
                         Add Stock

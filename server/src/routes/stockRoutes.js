@@ -7,6 +7,7 @@ const yahooFinance = require('yahoo-finance');
 const yahooFinance2 = require('yahoo-finance2').default;
 
 const Stock = mongoose.model('Stock');
+const User = mongoose.model('User');
 
 const router = express.Router();
 
@@ -57,32 +58,39 @@ router.get('/stocks', async (req, res) => {
         return res.send([])
     }
 
-    await Promise.all(tickers.map(async (ticker) => {
-        results[ticker] = {
-            "1d": await yahooFinance2._chart(ticker, {
-                period1: moment().format('YYYY-MM-DD') + "T14:30:00.000Z",
-                period2: moment().format(),
-                interval:'15m'
-                }, {validateResult: false}),
-            "1wk":await yahooFinance2._chart(ticker, {
-                period1: moment().subtract(1, 'week').format('YYYY-MM-DD'),
-                interval:'1h'
-            }, {validateResult: false}),
-            "1mo": await yahooFinance2._chart(ticker, {
-                period1: moment().subtract(1, 'month').format('YYYY-MM-DD'),
-                interval:'1d'
-            }, {validateResult: false}),
-            "3mo": await yahooFinance2._chart(ticker, {
-                period1: moment().subtract(3, 'months').format('YYYY-MM-DD'),
-                interval:'1d'
-            }, {validateResult: false}),
-            "1yr": await yahooFinance2._chart(ticker, {
-                period1: moment().subtract(1, 'year').format('YYYY-MM-DD'),
-                interval:'1d'
-            }, {validateResult: false})
-        };
-        // results[stock.ticker] = {"1d":result_1d['quotes'], "1wk":result_1wk['quotes'], "1mo":result_1mo['quotes'], "3mo":result_3mo['quotes'], "1yr":result_1yr['quotes']}
-    }))
+    for(let i=0; i<100; i++){
+        try{
+            await Promise.all(tickers.map(async (ticker) => {
+                results[ticker] = {
+                    "1d": await yahooFinance2._chart(ticker, {
+                        period1: moment().format('YYYY-MM-DD') + "T14:30:00.000Z",
+                        period2: moment().format(),
+                        interval:'15m'
+                        }, {validateResult: false}),
+                    "1wk":await yahooFinance2._chart(ticker, {
+                        period1: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+                        interval:'1h'
+                    }, {validateResult: false}),
+                    "1mo": await yahooFinance2._chart(ticker, {
+                        period1: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+                        interval:'1d'
+                    }, {validateResult: false}),
+                    "3mo": await yahooFinance2._chart(ticker, {
+                        period1: moment().subtract(3, 'months').format('YYYY-MM-DD'),
+                        interval:'1d'
+                    }, {validateResult: false}),
+                    "1yr": await yahooFinance2._chart(ticker, {
+                        period1: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+                        interval:'1d'
+                    }, {validateResult: false})
+                };
+                // results[stock.ticker] = {"1d":result_1d['quotes'], "1wk":result_1wk['quotes'], "1mo":result_1mo['quotes'], "3mo":result_3mo['quotes'], "1yr":result_1yr['quotes']}
+            }))
+            break;
+        }catch (err){
+            setTimeout(() => {console.log('error')}, 1000)
+        }
+    }
 
     if(tickers.length === 0){
         return res.send([]);
@@ -160,6 +168,25 @@ router.delete('/stocks/:ticker', async (req, res) => {
         ticker: ticker
     })
     res.send(ticker)
+});
+
+router.get('/user-info', async (req, res) => {
+    const user = await User.find({_id: req.user._id})
+    const firstName = user[0].firstName
+    const lastName = user[0].lastName
+    const email = user[0].email
+    res.send({firstName, lastName, email})
+})
+
+router.put('/email', async (req, res) => {
+    const {newEmail} = req.body;
+    try{
+        await User.findByIdAndUpdate({_id: req.user._id}, {"email":newEmail})
+        res.send(newEmail)
+    }catch (err){
+        res.status(422).send({message:'Duplicate Email'})
+    }
+
 })
 
 module.exports = router;

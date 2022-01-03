@@ -6,9 +6,13 @@ const authReducer = (state, action) => {
         case 'add_error':
             return {...state, errorMessage: {form:action.payload}};
         case 'signin':
-            return {errorMessage: '', token: action.payload};
+            return {...state, errorMessage: '', token: action.payload};
         case 'signout':
-            return {token: null, errorMessage: ''};
+            return {token: null, errorMessage: '', userInfo:{firstName:'', lastName:'', email:''}};
+        case 'user_info':
+            return {...state, userInfo:action.payload}
+        case 'update_email':
+            return {...state, errorMessage:'', userInfo:{...state.userInfo, email:action.payload}}
         default:
             return state;
     }
@@ -56,8 +60,22 @@ const tryLocalSignin = dispatch => async(navigate) => {
     }
 }
 
+const getUserInfo = dispatch => async () => {
+    const response = await stocksApi.get('/user-info');
+    dispatch({type:'user_info', payload:response.data})
+}
+
+const changeEmail = dispatch => async ({newEmail}) => {
+    try{
+        const response = await stocksApi.put('/email', {newEmail});
+        dispatch({type:'update_email', payload:response.data})
+    }catch(err){
+        dispatch({type:'add_error', payload:err.response.data.message})
+    }
+}
+
 export const {Provider, Context} = createDataContext(
     authReducer,
-    {signup, signin, signout, tryLocalSignin},
-    {token: null, errorMessage: {form:''}}
+    {signup, signin, signout, tryLocalSignin, getUserInfo, changeEmail},
+    {token: null, errorMessage: {form:''}, userInfo:{firstName:'', lastName:'', email:''}}
 )

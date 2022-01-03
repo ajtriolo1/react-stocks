@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect} from "react";
 import './Portfolio.css'
 import {Context as StockContext} from '../context/StockContext';
 import {Button, Grid} from "@mui/material";

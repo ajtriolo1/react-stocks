@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Plot from "react-plotly.js";
 import { useTheme } from '@mui/material/styles';
-import { ButtonGroup, Button, Box, Grid } from "@mui/material";
+import { ButtonGroup, Button } from "@mui/material";
 
 
 const StockChart = ({id, data, ticker}) => {

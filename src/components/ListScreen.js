@@ -84,7 +84,7 @@ const ListScreen = () => {
                     <AccordionDetails>
                         <Grid container spacing={2}>
                             <Grid container item xs={5.9} direction="column">
-                                {chartList.find(element => element.props.id == key)}
+                                {chartList.find(element => element.props.id === key)}
                             </Grid>
                         </Grid>    
                     </AccordionDetails>

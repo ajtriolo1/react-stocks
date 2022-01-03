@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Fab } from '@mui/material';
 import ListScreen from './components/ListScreen';
+import AccountScreen from './components/AccountScreen';
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
                 <Route path='/list' element={<ListScreen/>}/>
                 <Route path='/login' element={<LoginScreen/>}/>
                 <Route path='/signup' element={<SignupScreen/>}/>
+                <Route path='account' element={<AccountScreen/>}/>
               </Routes>
               <Fab 
                 sx={{
