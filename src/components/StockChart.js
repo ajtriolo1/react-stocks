@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import Plot from "react-plotly.js";
 import { useTheme } from '@mui/material/styles';
 import { ButtonGroup, Button } from "@mui/material";
+import {Context as StockContext} from '../context/StockContext';
 
 
-const StockChart = ({id, data, ticker}) => {
+const StockChart = ({ data, ticker }) => {
+    const {state:{selectedIntervals}, setSelectedInterval} = useContext(StockContext)
     const theme = useTheme();
     const [dates, setDates] = useState([]);
     const [prices, setPrices] = useState([]);
-    const [dataInterval, setDataInterval] = useState('1d');
     const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
     const [layout, setLayout] = useState({
         title:{
@@ -24,7 +25,7 @@ const StockChart = ({id, data, ticker}) => {
     });
 
     const getData = async () => {
-        const data_interval = data[dataInterval]['quotes']
+        const data_interval = data[selectedIntervals[ticker]]['quotes']
         data_interval.forEach(element => {
             setDates(dates => [...dates, element.date]);
             setPrices(prices => [...prices, element.close]);
@@ -35,7 +36,7 @@ const StockChart = ({id, data, ticker}) => {
         setDates([]);
         setPrices([]);
         getData();
-    }, [dataInterval]);
+    }, [selectedIntervals[ticker]]);
 
     useEffect(() => {
         setLayout({
@@ -57,7 +58,7 @@ const StockChart = ({id, data, ticker}) => {
         <>
             <ButtonGroup sx={{paddingRight:10, alignSelf:'flex-end'}} variant="outlined">
                 {intervals.map((value, index) => (
-                    <Button key={value} variant={dataInterval === value ? "contained" : 'outlined'} onClick={() => setDataInterval(value)}>{value}</Button>    
+                    <Button key={value} variant={selectedIntervals[ticker] === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval({ticker, interval:value})}>{value}</Button>    
                 ))}
             </ButtonGroup>
             <Plot

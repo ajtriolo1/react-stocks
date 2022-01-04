@@ -1,11 +1,15 @@
 require('./models/User');
 require('./models/Stock');
+require('./models/Transaction');
+require('./models/Portfolio');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const stockRoutes = require('./routes/stockRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+const portfolioRoutes = require('./routes/portfolioRoutes');
 const requireAuth = require('./middlewares/requireAuth');
 
 
@@ -17,6 +21,8 @@ app.use(cors({
 
 app.use(bodyParser.json());
 app.use(authRoutes)
+app.use(transactionRoutes);
+app.use(portfolioRoutes);
 app.use(stockRoutes);
 app.disable('etag');
 

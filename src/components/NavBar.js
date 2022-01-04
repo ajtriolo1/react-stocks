@@ -60,6 +60,9 @@ const NavBar = () => {
                         open={Boolean(anchorEl)}
                         onClose={handleClose}
                     >   
+                        <MenuItem onClick={() => navigate('/transactions')}>
+                            Transactions
+                        </MenuItem>
                         <MenuItem onClick={() => navigate('/account')}>
                             Account
                         </MenuItem>
