@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
 import './App.css';
-import ChartScreen from './components/ChartScreen';
+import ChartScreen from './screens/ChartScreen';
 import {Provider as AuthProvider} from './context/AuthContext';
 import {Provider as StockProvider} from './context/StockContext';
 import ResolveAuth from './components/ResolveAuth';
-import LoginScreen from './components/LoginScreen';
+import LoginScreen from './screens/LoginScreen';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignupScreen from './components/SignupScreen';
+import SignupScreen from './screens/SignupScreen';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Fab } from '@mui/material';
-import ListScreen from './components/ListScreen';
-import AccountScreen from './components/AccountScreen';
+import ListScreen from './screens/ListScreen';
+import AccountScreen from './screens/AccountScreen';
 
 function App() {
 

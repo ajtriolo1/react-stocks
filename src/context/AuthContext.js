@@ -71,6 +71,7 @@ const changeEmail = dispatch => async ({newEmail}) => {
         dispatch({type:'update_email', payload:response.data})
     }catch(err){
         dispatch({type:'add_error', payload:err.response.data.message})
+        return err.response.data.message
     }
 }
 

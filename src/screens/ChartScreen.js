@@ -1,11 +1,10 @@
 import React, {useContext, useEffect} from "react";
-import './Portfolio.css'
 import {Context as StockContext} from '../context/StockContext';
 import {Button, Grid} from "@mui/material";
-import NavBar from "./NavBar";
-import AddStock from "./AddStock";
+import NavBar from "../components/NavBar";
+import AddStock from "../components/AddStock";
 
-const Portfolio = () => {
+const ChartScreen = () => {
     const {state:{chartList}, fetchStocks, deleteStock} = useContext(StockContext);
 
     useEffect(() => {
@@ -34,4 +33,4 @@ const Portfolio = () => {
     );
 }
 
-export default Portfolio;
+export default ChartScreen;

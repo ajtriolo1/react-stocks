@@ -1,6 +1,6 @@
-import { Box, Button, TextField, Typography, Slide } from '@mui/material';
+import { Box, Button, TextField, Typography, Fade } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 import {Context as AuthContext} from '../context/AuthContext'
 import { keyframes } from '@mui/system';
 
@@ -14,13 +14,17 @@ const AccountScreen = () => {
     }, [])
 
     const handleSubmit = async () => {
-        await changeEmail({newEmail: newEmail});
-        if (!errorMessage.form){
-            setNewEmail('');
+        const err = await changeEmail({newEmail: newEmail})
+        setNewEmail('');
+        if(!err){
             setSuccess(true);
+            setTimeout(() => {
+                setSuccess(false);
+            }, 1000)
         }else{
-            setSuccess(false)
+            setSuccess(false);
         }
+        
     }
 
     return (
@@ -47,8 +51,18 @@ const AccountScreen = () => {
                 >
                     Change Email
                 </Button>
+                <Fade
+                    in={success}
+                    timeout={{
+                        enter: 500,
+                        exit: 500 
+                    }}
+                    unmountOnExit
+                >
+                    <Typography sx={{alignSelf:'center', color:'green', ml:2}}>Successfully Changed Email</Typography>
+                </Fade>
+                {errorMessage.form ? <Typography sx={{alignSelf:'center', color:'red', ml:2}} variant="body2">Email already in use</Typography> : null}
             </Box>
-            {errorMessage.form ? <Typography sx={{color:'red', ml:2}} variant="body2">Email already in use</Typography> : null}
         </>
     );
 };

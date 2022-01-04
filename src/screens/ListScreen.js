@@ -6,9 +6,9 @@ import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import React, { useContext, useEffect, useState } from 'react';
 import {Context as StockContext} from '../context/StockContext';
-import NavBar from './NavBar';
+import NavBar from '../components/NavBar';
 import { useTheme } from '@mui/material/styles';
-import AddStock from './AddStock';
+import AddStock from '../components/AddStock';
 
 const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
