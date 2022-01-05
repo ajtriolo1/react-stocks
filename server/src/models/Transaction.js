@@ -18,9 +18,17 @@ const transactionSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    total:{
+        type:Number,
+        default: 0
+    },
     transaction_type: {
         type: String,
         default: ''
+    },
+    owned: {
+        type: Number,
+        default: 0
     },
     date: {
         type: String,
