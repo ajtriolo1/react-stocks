@@ -35,7 +35,9 @@ const NavBar = () => {
                 <Button sx={{ my: 2, color: 'white', display: 'block' }} key="list" onClick={() => navigate('/list')}>
                     List
                 </Button>
-                {/* <Button sx={{ my:2, position:'absolute', right:40 }} color="signout" variant="contained" onClick={() => onSignoutClick()}>Sign Out</Button> */}
+                <Button sx={{ my: 2, color: 'white', display: 'block' }} key="portfolio" onClick={() => navigate('/portfolio')}>
+                    Portfolio
+                </Button>
                 <Box sx={{my:2, position:'absolute', right:30}}>
                     <IconButton
                         size="large"

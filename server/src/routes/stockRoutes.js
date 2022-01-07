@@ -8,6 +8,7 @@ const yahooFinance2 = require('yahoo-finance2').default;
 
 const Stock = mongoose.model('Stock');
 const User = mongoose.model('User');
+const Portfolio = mongoose.model('Portfolio')
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ router.use(requireAuth);
 
 router.get('/list', async(req, res) => {
     const stocks = await Stock.find({ userId: req.user._id });
+    const owned = await Portfolio.find({userId: req.user._id})
     const startDate = moment().subtract(3, 'days').format('YYYY-MM-DD');
     const endDate = moment().format('YYYY-MM-DD');
     const tickers = []
@@ -26,6 +28,7 @@ router.get('/list', async(req, res) => {
     stocks.forEach(stock => {
         tickers.push(stock.ticker);
     })
+
 
     yahooFinance.quote(
         {
@@ -112,7 +115,6 @@ router.get('/stocks', async (req, res) => {
     // );
 
     
-
     res.send(results);
 
 })

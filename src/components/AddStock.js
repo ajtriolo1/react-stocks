@@ -6,15 +6,15 @@ const AddStock = () => {
     const [term, setTerm] = useState('');
     const {state:{tickerList}, addStock, fetchList} = useContext(StockContext);
 
-    const onAddClick = async (term) => {
+    const onAddClick = async (event, term) => {
+        event.preventDefault();
+        setTerm('');
         if(tickerList.includes(term)){
             alert('This stock is already in your portfolio');
-            setTerm('');
         }else if (term === ''){
             alert('Please enter a stock ticker symbol')
         }else{
             await addStock(term);
-            setTerm('');
             fetchList();
             handleScroll();
         }
@@ -29,7 +29,7 @@ const AddStock = () => {
     }
 
     return (
-        <Grid container>
+        <Grid container component="form" onSubmit={(event) => onAddClick(event, term)}>
             <Grid item>
                 <TextField
                     sx={{margin:'10px'}}
@@ -43,10 +43,8 @@ const AddStock = () => {
             <Grid item alignItems="center" style={{display:'flex'}}>
                 <Button
                     variant="contained" 
-                    size="medium" 
-                    onClick={() => {
-                        onAddClick(term);
-                    }}
+                    size="medium"
+                    type='submit' 
                 >
                         Add Stock
                 </Button>

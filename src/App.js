@@ -14,6 +14,7 @@ import { Fab } from '@mui/material';
 import ListScreen from './screens/ListScreen';
 import AccountScreen from './screens/AccountScreen';
 import TransactionsScreen from './screens/TransactionsScreen';
+import PortfolioScreen from './screens/PortfolioScreen';
 
 function App() {
 
@@ -46,6 +47,7 @@ function App() {
                   <Route path='/signup' element={<SignupScreen/>}/>
                   <Route path='account' element={<AccountScreen/>}/>
                   <Route path='/transactions' element={<TransactionsScreen/>}/>
+                  <Route path='/portfolio' element={<PortfolioScreen/>}/>
                 </Routes>
                 <Fab 
                   sx={{

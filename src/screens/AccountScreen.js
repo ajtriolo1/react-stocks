@@ -2,7 +2,6 @@ import { Box, Button, TextField, Typography, Fade } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import {Context as AuthContext} from '../context/AuthContext'
-import { keyframes } from '@mui/system';
 
 const AccountScreen = () => {
     const {state:{userInfo, errorMessage}, getUserInfo, changeEmail} = useContext(AuthContext);

@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
-const yahooFinance2 = require('yahoo-finance2').default;
+const yahooFinance = require('yahoo-finance');
 const moment = require('moment');
 
 const Transaction = mongoose.model('Transaction');
@@ -22,21 +22,66 @@ router.get('/transactions', async (req, res) => {
 
 })
 
+router.get('/portfolio', async (req, res) => {
+    const portfolio = await Portfolio.find({userId: req.user._id})
+
+    if(portfolio.length === 0){
+        res.send([])
+    }
+
+    var result = {}
+
+    portfolio.forEach((stock) => {
+        result[stock.ticker] = stock
+    })
+
+    res.send(result)
+    
+})
+
+router.get('/portfolio/quotes', async (req, res) => {
+    const portfolio = await Portfolio.find({userId: req.user._id})
+    let tickers = []
+
+    if(portfolio.length === 0){
+        res.send([])
+    }
+
+    portfolio.forEach((stock) => {
+        tickers.push(stock.ticker)
+    })
+
+    yahooFinance.quote(
+        {
+            symbols: tickers,
+            modules: ['price']
+        },
+        function (err, quotes) {
+            if (err){
+                return res.status(422).send({error: 'Error fetching stock info'})
+            }
+            res.send(quotes);
+            res.end();
+        }
+    );
+})
+
 router.post('/sell', async (req, res) => {
     const {ticker, price, quantity} = req.body;
 
     if (!ticker || !price || !quantity){
-        return res.status(422).send({error: 'Please provide a ticker, price, and quantity'});
+        return res.status(422).send({message: 'Please provide a ticker, price, and quantity'});
     }
 
     const buys = await Transaction.find({userId: req.user._id, ticker:ticker, transaction_type:'buy', owned:{$gt:0}})
     const stock = await Portfolio.find({userId: req.user._id, ticker:ticker})
 
     if(stock.length === 0 || stock[0].quantity < quantity){
-        return res.status(422).send({error: 'Not enough or none of that stock is owned'})
+        return res.status(422).send({message: 'Not enough or none of that stock is owned'})
     }
 
     let remaining = quantity;
+    let newTotal = stock[0].total
 
     await buys.reduce(async (memo, buy) => {
         await memo
@@ -46,9 +91,11 @@ router.post('/sell', async (req, res) => {
         }
         if(buy.owned < remaining){
             remaining -= buy.owned
+            newTotal -= (buy.price*buy.owned)
             await Transaction.findOneAndUpdate({userId: req.user._id, _id: buy._id}, {owned: 0}, {new:true}).clone()
         }else{
             const newOwned = buy.owned-remaining
+            newTotal -= (remaining*buy.price)
             remaining = 0
             await Transaction.findOneAndUpdate({userId: req.user._id, _id: buy._id}, {owned: newOwned}, {new:true}).clone()
         }
@@ -64,12 +111,12 @@ router.post('/sell', async (req, res) => {
         date: moment().format('MMMM Do YYYY, h:mm:ss a')
     });
 
-    const newDoc = await Transaction.find({userId: req.user._id, ticker:ticker, transaction_type:'buy', owned:{$gt:0}})
+    //const newDoc = await Transaction.find({userId: req.user._id, ticker:ticker, transaction_type:'buy', owned:{$gt:0}})
     const newQuantity = stock[0].quantity - quantity
-    let newTotal = 0
-    newDoc.forEach((buy) => {
-        newTotal += (buy.price*buy.owned);
-    })
+    // let newTotal = 0
+    // newDoc.forEach((buy) => {
+    //     newTotal += (buy.price*buy.owned);
+    // })
 
     try{
         if(newQuantity === 0){
@@ -80,7 +127,7 @@ router.post('/sell', async (req, res) => {
         await transaction.save()
         res.send('Success!')
     }catch(err){
-        res.status(422).send({error: err.message})
+        res.status(422).send({message: err.message})
     }
 
 })
@@ -89,7 +136,7 @@ router.post('/buy', async (req, res) => {
     const {ticker, price, quantity} = req.body;
 
     if (!ticker || !price || !quantity){
-        return res.status(422).send({error: 'Please provide a ticker, price, and quantity'});
+        return res.status(422).send({message: 'Please provide a ticker, price, and quantity'});
     }
 
     const stock = await Portfolio.find({userId: req.user._id, ticker:ticker})
@@ -123,7 +170,7 @@ router.post('/buy', async (req, res) => {
         await transaction.save()
         res.send('Success!')
     }catch(err){
-        res.status(422).send({error: err.message})
+        res.status(422).send({message: err.message})
     }
 })
 

@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, TextField, Box } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -9,6 +9,7 @@ import {Context as StockContext} from '../context/StockContext';
 import NavBar from '../components/NavBar';
 import { useTheme } from '@mui/material/styles';
 import AddStock from '../components/AddStock';
+import BuySellForm from '../components/BuySellForm';
 
 const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -68,6 +69,7 @@ const ListScreen = () => {
     };
 
     const onDeleteClick = async (ticker) => {
+        setExpanded('')
         await deleteStock(ticker);
     }
 
@@ -79,17 +81,15 @@ const ListScreen = () => {
                 <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)}>
                     <AccordionSummary id={key}>
                         <Typography sx={{width:'95%', flexShrink:0}}>{`${value.price.shortName}: $${value.price.regularMarketPrice}`}</Typography>
-                        <Button sx={{fontWeight:'bold', fontFamily:'Calibri', fontSize:'14.5px', padding:0}} variant="contained" size="medium" onClick={() => onDeleteClick(key)}>Delete</Button>
+                        <Button sx={{fontFamily:'Calibri', fontSize:'14.5px', padding:0}} variant="contained" size="medium" onClick={() => onDeleteClick(key)}>Delete</Button>
                     </AccordionSummary>
                     <AccordionDetails sx={{display: 'flex', flexDirection:'column'}}>
                         <Grid container spacing={1}>
                             <Grid container item xs={5.9} direction="column">
                                 {chartList.find(element => element.props.id === key)}
                             </Grid>
-                            <Grid container item xs={5.9} direction="column" justifyContent={"center"}>
-                                <Box sx={{display:'flex', justifyContent: 'center'}}>
-                                    <TextField sx={{mb:3}} type="number" inputProps={{min:0, inputMode: 'numeric', pattern: '[0-9]*'}} />
-                                </Box>
+                            <Grid container item xs={5.9} direction="column">
+                                <BuySellForm stock={key} value={value}/>
                             </Grid>
                         </Grid>   
                     </AccordionDetails>
