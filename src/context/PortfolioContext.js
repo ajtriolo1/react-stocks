@@ -5,7 +5,11 @@ const portfolioReducer = (state, action) => {
     switch (action.type){
         case 'fetch_transactions':
             action.payload.forEach((transaction) => {
-                transaction.total = transaction.transaction_type === 'buy' ? `-$${transaction.total}` : `+$${transaction.total}`
+                if(transaction.total > 1.0){
+                    transaction.total = transaction.transaction_type === 'buy' ? `-$${transaction.total.toFixed(2)}` : `+$${transaction.total.toFixed(2)}`
+                }else{
+                    transaction.total = transaction.transaction_type === 'buy' ? `-$${transaction.total}` : `+$${transaction.total}`
+                }  
             })
             return {...state, transactionList:action.payload}
         case 'fetch_portfolio':

@@ -80,7 +80,13 @@ const ListScreen = () => {
             {Object.entries(stocksList).map(([key, value]) => (
                 <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)}>
                     <AccordionSummary id={key}>
-                        <Typography sx={{width:'95%', flexShrink:0}}>{`${value.price.shortName}: $${value.price.regularMarketPrice}`}</Typography>
+                        <Typography sx={{width:'95%', flexShrink:0}}>
+                            {
+                            value.price.regularMarketPrice > 1.0 
+                            ? `${value.price.shortName}: $${value.price.regularMarketPrice.toFixed(2)}`
+                            : `${value.price.shortName}: $${value.price.regularMarketPrice}`
+                            }
+                        </Typography>
                         <Button sx={{fontFamily:'Calibri', fontSize:'14.5px', padding:0}} variant="contained" size="medium" onClick={() => onDeleteClick(key)}>Delete</Button>
                     </AccordionSummary>
                     <AccordionDetails sx={{display: 'flex', flexDirection:'column'}}>

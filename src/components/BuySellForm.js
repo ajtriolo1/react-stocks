@@ -40,7 +40,7 @@ const BuySellForm = ({stock, value}) => {
             <Box component="form" sx={{display: 'flex', m: 'auto'}} onSubmit={(event) => onSubmit(event, currentPrice, stock)}>
                 <Box sx={{display:'flex', flexDirection:'column', mb:8}}>
                     <Box my={2} display={"flex"} justifyContent={'center'}>
-                        <Typography variant="h3">{`$${currentPrice}`}</Typography>
+                        <Typography variant="h3">{currentPrice > 1.0 ? `$${currentPrice.toFixed(2)}` : `$${currentPrice}`}</Typography>
                     </Box> 
                     <TextField 
                         id="quantity" 
@@ -63,11 +63,18 @@ const BuySellForm = ({stock, value}) => {
                         value={inputVal[stock] || ''}
                     />
                     <Box my={2} display={"flex"} justifyContent={'center'}>
-                        <Typography variant="h5">
+                        {currentPrice > 1.0 
+                        ? <Typography variant="h5">
                             {inputVal[stock] && inputVal[stock] > 0 
-                            ? `Total: $${parseFloat(currentPrice*inputVal[stock]).toFixed(20).match(/^-?\d*\.?0*\d{0,2}/)[0]}` 
+                            ? `Total: $${parseFloat(currentPrice*inputVal[stock]).toFixed(2)}` 
                             : ''}
                         </Typography>
+                        : <Typography variant="h5">
+                            {inputVal[stock] && inputVal[stock] > 0 
+                            ? `Total: $${parseFloat(currentPrice*inputVal[stock])}` 
+                            : ''}
+                        </Typography>
+                        }
                     </Box> 
                     <Button type="submit" name="buy">Buy</Button>
                     <Button type="submit" name="sell">Sell</Button>

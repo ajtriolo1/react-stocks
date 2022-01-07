@@ -86,16 +86,25 @@ router.post('/sell', async (req, res) => {
     await buys.reduce(async (memo, buy) => {
         await memo
         if(remaining === 0){
-            console.log('here')
             return true;
         }
         if(buy.owned < remaining){
             remaining -= buy.owned
-            newTotal -= (buy.price*buy.owned)
+            if (buy.price > 1.0){
+                newTotal -= (buy.price*buy.owned)
+                newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+            }else{
+                newTotal -= (buy.price*buy.owned)
+            }
             await Transaction.findOneAndUpdate({userId: req.user._id, _id: buy._id}, {owned: 0}, {new:true}).clone()
         }else{
             const newOwned = buy.owned-remaining
-            newTotal -= (remaining*buy.price)
+            if(buy.price > 1.0){
+                newTotal -= (remaining*buy.price)
+                newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+            }else{
+                newTotal -= (remaining*buy.price)
+            }
             remaining = 0
             await Transaction.findOneAndUpdate({userId: req.user._id, _id: buy._id}, {owned: newOwned}, {new:true}).clone()
         }
@@ -105,7 +114,7 @@ router.post('/sell', async (req, res) => {
         userId:req.user._id, 
         ticker, 
         price,
-        total: price*quantity, 
+        total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity, 
         quantity, 
         transaction_type:'sell',
         date: moment().format('MMMM Do YYYY, h:mm:ss a')
@@ -145,13 +154,19 @@ router.post('/buy', async (req, res) => {
         const item = new Portfolio({
             userId: req.user._id,
             ticker,
-            total: price*quantity,
+            total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity,
             quantity
         })
         await item.save()
     }else{
         const newQuantity = stock[0].quantity + quantity
-        const newTotal = stock[0].total + (price*quantity)
+        let newTotal = stock[0].total
+        if(price > 1.0){
+            newTotal += (price*quantity)
+            newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+        }else{
+            newTotal += (price*quantity)
+        }
         await Portfolio.findOneAndUpdate({userId: req.user._id, ticker: ticker}, {quantity:newQuantity, total:newTotal})
     }
 
@@ -160,7 +175,7 @@ router.post('/buy', async (req, res) => {
         ticker, 
         price, 
         quantity,
-        total: price*quantity, 
+        total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity, 
         transaction_type:'buy',
         owned: quantity,
         date: moment().format('MMMM Do YYYY, h:mm:ss a')

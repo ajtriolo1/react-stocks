@@ -3,13 +3,14 @@ import { DataGrid } from '@mui/x-data-grid';
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as PortfolioContext} from '../context/PortfolioContext';
+import moment from 'moment';
 
 const columns = [
     {field: 'ticker', headerName:'Stock', flex:1},
     {field: 'quantity', headerName:'Quantity', flex:1},
-    {field: 'price', headerName:'Stock Price', flex:1, valueFormatter: ({value}) => `$${value}`},
+    {field: 'price', headerName:'Stock Price', flex:1, valueFormatter: ({value}) => value < 1.0 ? `$${value}`: `$${value.toFixed(2)}`},
     {field: 'total', headerName: 'Spent/Gained', flex:1},
-    {field:'date', headerName:'Date', flex:1, type:'date'}
+    {field:'date', headerName:'Date', flex:1, type:'dateTime', valueGetter: ({value}) => value && moment(value, 'MMMM Do YYYY, h:mm:ss a').toDate()}
 
 ]
 
@@ -23,6 +24,8 @@ const TransactionsScreen = () => {
             sort: 'desc',
         }
     ]);
+
+    console.log(moment('January 7th 2022, 9:34:06 am', 'MMMM Do YYYY, h:mm:ss a').toDate())
 
     useEffect(() => {
         getTransactions();
