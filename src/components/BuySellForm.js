@@ -44,7 +44,7 @@ const BuySellForm = ({stock, value, callback}) => {
             <Box component="form" sx={{display: 'flex', m: 'auto'}} onSubmit={(event) => onSubmit(event, currentPrice, stock)}>
                 <Box sx={{display:'flex', flexDirection:'column', mb:8}}>
                     <Box my={2} display={"flex"} justifyContent={'center'}>
-                        <Typography variant="h3">{currentPrice > 1.0 ? `$${currentPrice.toFixed(2)}` : `$${currentPrice}`}</Typography>
+                        <Typography variant="h3">{currentPrice > 1.0 ? `$${currentPrice.toLocaleString('en-US')}` : `$${currentPrice}`}</Typography>
                     </Box> 
                     <TextField 
                         id="quantity" 
@@ -70,7 +70,7 @@ const BuySellForm = ({stock, value, callback}) => {
                         {currentPrice > 1.0 
                         ? <Typography variant="h5">
                             {inputVal[stock] && inputVal[stock] > 0 
-                            ? `Total: $${parseFloat(currentPrice*inputVal[stock]).toFixed(2)}` 
+                            ? `Total: $${parseFloat(currentPrice*inputVal[stock]).toLocaleString('en-US')}` 
                             : ''}
                         </Typography>
                         : <Typography variant="h5">

@@ -6,13 +6,31 @@ import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton} from '@
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from '../components/BuySellForm'
 
+const gainFormatter = (params) => {
+    if (params.value < 0) {
+        if (Math.abs(params.value) > 0.01){
+            return `-$${Math.abs(params.value).toLocaleString('en-US')}`
+        }else{
+            return `-$${Math.abs(params.value).toFixed(10)}`
+        }  
+    }else if (params.value > 0){
+        if (params.value > 0.01){
+            return `$${params.value.toLocaleString('en-US')}`
+        }else{
+            return `$${params.value.toFixed(10)}`
+        }
+    }else{
+        return `$0.00`
+    }
+}
+
 const columns = [
     {field: 'ticker', headerName:'Stock', flex:1},
-    {field: 'currentPrice', headerName: 'Current Price', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toFixed(2)}` : `$${value}`},
-    {field:'quantity', headerName: 'Amount Owned', flex:1},
-    {field:'currentValue', headerName:'Current Value', flex:1, valueFormatter: ({value}) => `$${value}`},
-    {field:'total', headerName: 'Total Cost', flex:1, valueFormatter: ({value}) => `$${value}`},
-    {field: 'gains', headerName:'Gained/Lost', flex:1, valueFormatter: ({value}) => value > 0 ? `$${value}` : `-$${Math.abs(value)}`}
+    {field: 'currentPrice', headerName: 'Current Price', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
+    {field:'quantity', headerName: 'Amount Owned', flex:1, valueFormatter: ({value}) => value.toLocaleString('en-US')},
+    {field:'currentValue', headerName:'Current Value', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
+    {field:'total', headerName: 'Total Cost', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
+    {field: 'gains', headerName:'Gained/Lost', flex:1, valueFormatter: gainFormatter}
 ]
 
 const CustomNoRowsOverlay = () => {
@@ -54,13 +72,13 @@ const PortfolioScreen = () => {
         vals.forEach((val) => {
             if(portfolioQuotes[val.ticker]){
                 if(portfolioQuotes[val.ticker].price.regularMarketPrice > 1.0){
-                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total)).toFixed(2)
-                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice).toFixed(2)
-                    val['total'] = parseFloat(val['total']).toFixed(2)
+                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total))
+                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
+                    val['total'] = parseFloat(val['total'])
                 }else{
-                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total)).toFixed(10)
-                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice).toFixed(10)
-                    val['total'] = parseFloat(val['total']).toFixed(10)
+                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total))
+                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
+                    val['total'] = parseFloat(val['total'])
                 }
                 val['currentPrice'] = portfolioQuotes[val.ticker].price.regularMarketPrice
             }

@@ -92,7 +92,7 @@ router.post('/sell', async (req, res) => {
             remaining -= buy.owned
             if (buy.price > 1.0){
                 newTotal -= (buy.price*buy.owned)
-                newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+                newTotal = Math.round((newTotal+Number.EPSILON) * 1000)/1000
             }else{
                 newTotal -= (buy.price*buy.owned)
             }
@@ -101,7 +101,7 @@ router.post('/sell', async (req, res) => {
             const newOwned = buy.owned-remaining
             if(buy.price > 1.0){
                 newTotal -= (remaining*buy.price)
-                newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+                newTotal = Math.round((newTotal+Number.EPSILON) * 1000)/1000
             }else{
                 newTotal -= (remaining*buy.price)
             }
@@ -114,7 +114,7 @@ router.post('/sell', async (req, res) => {
         userId:req.user._id, 
         ticker, 
         price,
-        total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity, 
+        total: price > 1.0 ? Math.round((price*quantity)*1000)/1000 : price*quantity, 
         quantity, 
         transaction_type:'sell',
         date: moment().format('MMMM Do YYYY, h:mm:ss a')
@@ -154,7 +154,7 @@ router.post('/buy', async (req, res) => {
         const item = new Portfolio({
             userId: req.user._id,
             ticker,
-            total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity,
+            total: price > 1.0 ? Math.round((price*quantity)*1000)/1000 : price*quantity,
             quantity
         })
         await item.save()
@@ -163,7 +163,7 @@ router.post('/buy', async (req, res) => {
         let newTotal = stock[0].total
         if(price > 1.0){
             newTotal += (price*quantity)
-            newTotal = Math.round((newTotal+Number.EPSILON) * 100)/100
+            newTotal = Math.round((newTotal+Number.EPSILON) * 1000)/1000
         }else{
             newTotal += (price*quantity)
         }
@@ -175,7 +175,7 @@ router.post('/buy', async (req, res) => {
         ticker, 
         price, 
         quantity,
-        total: price > 1.0 ? Math.round((price*quantity)*100)/100 : price*quantity, 
+        total: price > 1.0 ? Math.round((price*quantity)*1000)/1000 : price*quantity, 
         transaction_type:'buy',
         owned: quantity,
         date: moment().format('MMMM Do YYYY, h:mm:ss a')

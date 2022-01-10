@@ -83,7 +83,7 @@ const ListScreen = () => {
                         <Typography sx={{width:'95%', flexShrink:0}}>
                             {
                             value.price.regularMarketPrice > 1.0 
-                            ? `${value.price.shortName}: $${value.price.regularMarketPrice.toFixed(2)}`
+                            ? `${value.price.shortName}: $${value.price.regularMarketPrice.toLocaleString('en-US')}`
                             : `${value.price.shortName}: $${value.price.regularMarketPrice}`
                             }
                         </Typography>
