@@ -18,7 +18,7 @@ const AddStock = () => {
         }else{
             setLoadingCharts(true);
             await addStock(term);
-            fetchList();
+            await fetchList();
             handleScroll();
             setLoadingCharts(false);
         }
