@@ -2,7 +2,7 @@ import React, {useState, useContext, useEffect} from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 import {Context as PortfolioContext} from '../context/PortfolioContext'
 
-const BuySellForm = ({stock, value}) => {
+const BuySellForm = ({stock, value, callback}) => {
     const [inputVal, setInputVal] = useState({});
     const {state:{portfolio}, buyStock, sellStock, getPortfolio} = useContext(PortfolioContext);
     const currentPrice = value.price.regularMarketPrice
@@ -18,16 +18,20 @@ const BuySellForm = ({stock, value}) => {
         if (name === 'buy'){
             const err = await buyStock(ticker, price, parseInt(data.get('quantity')))
             if(err){
-                alert(err)
+                return alert(err)
             }
         }else{
             const err = await sellStock(ticker, price, parseInt(data.get('quantity')));
             if(err){
-                alert('You can\'t sell more than you have!')
+                setInputVal({...inputVal, [ticker]:''})
+                return alert(err)
             }
         }
         setInputVal({...inputVal, [ticker]:''})
         getPortfolio()
+        if(callback){
+            callback(false)
+        }
     }
 
     return (

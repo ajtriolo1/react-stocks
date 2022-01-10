@@ -1,9 +1,11 @@
 import React, {useState, useContext} from 'react';
 import { Grid, TextField, Button } from '@mui/material';
+import {LoadingButton} from '@mui/lab'
 import { Context as StockContext } from '../context/StockContext';
 
 const AddStock = () => {
     const [term, setTerm] = useState('');
+    const [loadingCharts, setLoadingCharts] = useState(false);
     const {state:{tickerList}, addStock, fetchList} = useContext(StockContext);
 
     const onAddClick = async (event, term) => {
@@ -14,9 +16,11 @@ const AddStock = () => {
         }else if (term === ''){
             alert('Please enter a stock ticker symbol')
         }else{
+            setLoadingCharts(true);
             await addStock(term);
             fetchList();
             handleScroll();
+            setLoadingCharts(false);
         }
     }
 
@@ -41,13 +45,14 @@ const AddStock = () => {
                 />
             </Grid>
             <Grid item alignItems="center" style={{display:'flex'}}>
-                <Button
+                <LoadingButton
                     variant="contained" 
                     size="medium"
-                    type='submit' 
+                    type='submit'
+                    loading={loadingCharts} 
                 >
                         Add Stock
-                </Button>
+                </LoadingButton>
             </Grid>
         </Grid>
     )

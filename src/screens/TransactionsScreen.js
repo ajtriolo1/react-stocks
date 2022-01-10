@@ -1,5 +1,5 @@
 import { Typography, Box } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridOverlay } from '@mui/x-data-grid';
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as PortfolioContext} from '../context/PortfolioContext';
@@ -13,6 +13,14 @@ const columns = [
     {field:'date', headerName:'Date', flex:1, type:'dateTime', valueGetter: ({value}) => value && moment(value, 'MMMM Do YYYY, h:mm:ss a').toDate()}
 
 ]
+
+const CustomNoRowsOverlay = () => {
+    return (
+        <GridOverlay>
+            <Typography>You have not made a transaction</Typography>
+        </GridOverlay>
+    )
+}
 
 const TransactionsScreen = () => {
     const {state:{transactionList}, getTransactions} = useContext(PortfolioContext)
@@ -54,6 +62,9 @@ const TransactionsScreen = () => {
                     <DataGrid
                         autoHeight
                         columns={columns}
+                        components={{
+                            NoRowsOverlay: CustomNoRowsOverlay
+                        }}
                         rows={transactionList}
                         getRowId={(row) => row._id}
                         sortModel={sortModel}

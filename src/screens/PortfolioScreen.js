@@ -1,23 +1,10 @@
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as PortfolioContext} from '../context/PortfolioContext';
-import { DataGrid } from '@mui/x-data-grid';
-
-const gainFormatter = (params) => {
-    if (params.value < 0) {
-        if (Math.abs(params.value) > 0.1){
-            return `-$${Math.abs(params.value).toFixed(2)}`
-        }else{
-            return `-$${Math.abs(params.value).toFixed(10)}`
-        }  
-    }else{
-        if (Math.abs(params.value) > 0.1){
-            return `$${Math.abs(params.value).toFixed(2)}`
-        }else{
-            return `$${Math.abs(params.value).toFixed(10)}`
-        } 
-    }
-}
+import { DataGrid, GridOverlay } from '@mui/x-data-grid';
+import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
+import BuySellForm from '../components/BuySellForm'
 
 const columns = [
     {field: 'ticker', headerName:'Stock', flex:1},
@@ -25,11 +12,22 @@ const columns = [
     {field:'quantity', headerName: 'Amount Owned', flex:1},
     {field:'currentValue', headerName:'Current Value', flex:1, valueFormatter: ({value}) => `$${value}`},
     {field:'total', headerName: 'Total Cost', flex:1, valueFormatter: ({value}) => `$${value}`},
-    {field: 'gains', headerName:'Gained/Lost', flex:1, valueFormatter: gainFormatter}
+    {field: 'gains', headerName:'Gained/Lost', flex:1, valueFormatter: ({value}) => value > 0 ? `$${value}` : `-$${Math.abs(value)}`}
 ]
+
+const CustomNoRowsOverlay = () => {
+    return (
+        <GridOverlay>
+            <Typography>You have no stocks in your portfolio</Typography>
+        </GridOverlay>
+    )
+}
 
 const PortfolioScreen = () => {
     const {state:{portfolio, portfolioQuotes}, getPortfolio, getPortfolioQuotes} = useContext(PortfolioContext)
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [stockOpen, setStockOpen] = useState('');
+    const [openStockValue, setOpenStockValue] = useState({})
     const [data, setData] = useState([]);
     const [pageSize,setPageSize] = useState(10);
     const [pageOptions, setPageOptions] = useState([10,20,40,80,100]);
@@ -51,6 +49,7 @@ const PortfolioScreen = () => {
     }, [])
 
     useEffect(() => {
+        console.log('here')
         let vals = Object.values(portfolio)
         vals.forEach((val) => {
             if(portfolioQuotes[val.ticker]){
@@ -59,7 +58,7 @@ const PortfolioScreen = () => {
                     val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice).toFixed(2)
                     val['total'] = parseFloat(val['total']).toFixed(2)
                 }else{
-                    val['gains'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total)
+                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total)).toFixed(10)
                     val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice).toFixed(10)
                     val['total'] = parseFloat(val['total']).toFixed(10)
                 }
@@ -67,7 +66,19 @@ const PortfolioScreen = () => {
             }
         })
         setData(vals)
-    }, [JSON.stringify(portfolioQuotes)])
+    }, [JSON.stringify(portfolioQuotes), JSON.stringify(portfolio)])
+
+    const handleRowClick = (event) => {
+        setDialogOpen(true)
+        setStockOpen(event.row.ticker)
+        setOpenStockValue(portfolioQuotes[event.row.ticker])
+    }
+
+    const handleDialogClose = (event) => {
+        setDialogOpen(false)
+        setStockOpen('')
+        setOpenStockValue({})
+    }
 
     return (
         <>
@@ -87,10 +98,15 @@ const PortfolioScreen = () => {
                 autoHeight
                 columns={columns}
                 rows={data}
+                components={{
+                    NoRowsOverlay: CustomNoRowsOverlay
+                }}
+                disableSelectionOnClick
                 getRowId={(row) => row._id}
                 sortModel={sortModel}
                 onSortModelChange={(model) => setSortModel(model)}
                 rowsPerPageOptions={pageOptions}
+                onRowClick={handleRowClick}
                 onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                 pageSize={pageSize}
                 getCellClassName={(params) => {
@@ -106,6 +122,26 @@ const PortfolioScreen = () => {
                     }
                 }}
             />
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+            >
+                <DialogTitle>
+                    <Box display="flex" alignItems="center">
+                        <Box flexGrow={1}>{`Buy More ${stockOpen}`}</Box>
+                        <Box>
+                            <IconButton onClick={() => setDialogOpen(false)}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                    </Box>    
+                </DialogTitle>
+                <DialogContent>
+                    <Box display="flex" flexDirection={"column"} marginTop="10px">
+                        <BuySellForm stock={stockOpen} value={openStockValue} callback={setDialogOpen}/>
+                    </Box>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
