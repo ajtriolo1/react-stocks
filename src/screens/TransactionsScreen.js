@@ -33,8 +33,6 @@ const TransactionsScreen = () => {
         }
     ]);
 
-    console.log(moment('January 7th 2022, 9:34:06 am', 'MMMM Do YYYY, h:mm:ss a').toDate())
-
     useEffect(() => {
         getTransactions();
     }, []);

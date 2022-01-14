@@ -13,6 +13,7 @@
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.24.0",
+    "bigdecimal": "^0.6.1",
     "google-finance": "^0.1.12",
     "moment": "^2.29.1",
     "plotly.js": "^2.8.0",

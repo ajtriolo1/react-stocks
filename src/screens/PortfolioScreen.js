@@ -9,15 +9,15 @@ import BuySellForm from '../components/BuySellForm'
 const gainFormatter = (params) => {
     if (params.value < 0) {
         if (Math.abs(params.value) > 0.01){
-            return `-$${Math.abs(params.value).toLocaleString('en-US')}`
+            return `-$${Math.abs(params.value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
         }else{
-            return `-$${Math.abs(params.value).toFixed(10)}`
+            return `-$${Math.abs(params.value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
         }  
     }else if (params.value > 0){
         if (params.value > 0.01){
-            return `$${params.value.toLocaleString('en-US')}`
+            return `$${params.value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
         }else{
-            return `$${params.value.toFixed(10)}`
+            return `$${params.value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
         }
     }else{
         return `$0.00`
@@ -26,10 +26,10 @@ const gainFormatter = (params) => {
 
 const columns = [
     {field: 'ticker', headerName:'Stock', flex:1},
-    {field: 'currentPrice', headerName: 'Current Price', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
-    {field:'quantity', headerName: 'Amount Owned', flex:1, valueFormatter: ({value}) => value.toLocaleString('en-US')},
-    {field:'currentValue', headerName:'Current Value', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
-    {field:'total', headerName: 'Total Cost', flex:1, valueFormatter: ({value}) => value > 1.0 ? `$${value.toLocaleString('en-US')}` : `$${value}`},
+    {field: 'currentPrice', headerName: 'Current Price', flex:1, valueFormatter: ({value}) => `$${parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`},
+    {field:'quantity', headerName: 'Amount Owned', flex:1, valueFormatter: ({value}) => parseFloat(value).toLocaleString('en-US')},
+    {field:'currentValue', headerName:'Current Value', flex:1, valueFormatter: ({value}) => `$${parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`},
+    {field:'total', headerName: 'Total Cost', flex:1, valueFormatter: ({value}) => `$${parseFloat(value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`},
     {field: 'gains', headerName:'Gained/Lost', flex:1, valueFormatter: gainFormatter}
 ]
 

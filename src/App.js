@@ -4,6 +4,7 @@ import ChartScreen from './screens/ChartScreen';
 import {Provider as AuthProvider} from './context/AuthContext';
 import {Provider as StockProvider} from './context/StockContext';
 import {Provider as PortfolioProvider} from './context/PortfolioContext'
+import {Provider as OrderProvider} from './context/OrderContext'
 import ResolveAuth from './components/ResolveAuth';
 import LoginScreen from './screens/LoginScreen';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -15,6 +16,7 @@ import ListScreen from './screens/ListScreen';
 import AccountScreen from './screens/AccountScreen';
 import TransactionsScreen from './screens/TransactionsScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
+import OrdersScreen from './screens/OrdersScreen'
 
 function App() {
 
@@ -36,36 +38,39 @@ function App() {
       <StockProvider>
         <AuthProvider>
           <PortfolioProvider>
-            <Router>
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Routes>
-                  <Route path='/' element={<ResolveAuth />}/>
-                  <Route path='/charts' element={<ChartScreen/>}/>
-                  <Route path='/list' element={<ListScreen/>}/>
-                  <Route path='/login' element={<LoginScreen/>}/>
-                  <Route path='/signup' element={<SignupScreen/>}/>
-                  <Route path='account' element={<AccountScreen/>}/>
-                  <Route path='/transactions' element={<TransactionsScreen/>}/>
-                  <Route path='/portfolio' element={<PortfolioScreen/>}/>
-                </Routes>
-                <Fab 
-                  sx={{
-                    position:'fixed', 
-                    bottom:20, 
-                    right:20, 
-                    top:'auto', 
-                    left:'auto', 
-                    margin:0
-                    }} 
-                  color="primary" 
-                  variant='extended'
-                  onClick={() => setDark(!dark)}
-                  >
-                    {buttonText}
-                </Fab>
-              </ThemeProvider>
-            </Router>
+            <OrderProvider>
+              <Router>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <Routes>
+                    <Route path='/' element={<ResolveAuth />}/>
+                    <Route path='/charts' element={<ChartScreen/>}/>
+                    <Route path='/list' element={<ListScreen/>}/>
+                    <Route path='/login' element={<LoginScreen/>}/>
+                    <Route path='/signup' element={<SignupScreen/>}/>
+                    <Route path='account' element={<AccountScreen/>}/>
+                    <Route path='/transactions' element={<TransactionsScreen/>}/>
+                    <Route path='/portfolio' element={<PortfolioScreen/>}/>
+                    <Route path='/orders' element={<OrdersScreen/>}/>
+                  </Routes>
+                  <Fab 
+                    sx={{
+                      position:'fixed', 
+                      bottom:20, 
+                      right:20, 
+                      top:'auto', 
+                      left:'auto', 
+                      margin:0
+                      }} 
+                    color="primary" 
+                    variant='extended'
+                    onClick={() => setDark(!dark)}
+                    >
+                      {buttonText}
+                  </Fab>
+                </ThemeProvider>
+              </Router>
+            </OrderProvider>
           </PortfolioProvider>
         </AuthProvider>
       </StockProvider>

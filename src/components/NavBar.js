@@ -38,6 +38,9 @@ const NavBar = () => {
                 <Button sx={{ my: 2, color: 'white', display: 'block' }} key="portfolio" onClick={() => navigate('/portfolio')}>
                     Portfolio
                 </Button>
+                <Button sx={{ my: 2, color: 'white', display: 'block' }} key="orders" onClick={() => navigate('/orders')}>
+                    Orders
+                </Button>
                 <Box sx={{my:2, position:'absolute', right:30}}>
                     <IconButton
                         size="large"

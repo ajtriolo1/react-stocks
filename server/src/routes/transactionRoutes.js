@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 const yahooFinance = require('yahoo-finance');
 const moment = require('moment');
+var bigdecimal = require('bigdecimal')
 
 const Transaction = mongoose.model('Transaction');
 const Portfolio = mongoose.model('Portfolio');
@@ -88,6 +89,7 @@ router.post('/sell', async (req, res) => {
         if(remaining === 0){
             return true;
         }
+        //console.log(bigdecimal.BigDecimal(buy.owned).multiply(bigdecimal.BigDecimal(buy.price)).floatValue())
         if(buy.owned < remaining){
             remaining -= buy.owned
             if (buy.price > 1.0){
