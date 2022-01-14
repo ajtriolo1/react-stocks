@@ -37,12 +37,6 @@ const TransactionsScreen = () => {
         getTransactions();
     }, []);
 
-    useEffect(() => {
-        if(transactionList.length > 100){
-            setPageOptions([...pageOptions, transactionList.length])
-        }
-    }, [])
-
     return (
         <>
             <NavBar/>

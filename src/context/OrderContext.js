@@ -20,8 +20,12 @@ const fetchOrders = dispatch => async() => {
 }
 
 const addOrder = dispatch => async(ticker, price, quantity, order_type, buy_sell) => {
-    const res = await stocksApi.post('/order', {ticker, price, quantity, order_type, buy_sell});
-    dispatch({type: 'add_order', payload:res.data})
+    try{
+        const res = await stocksApi.post('/order', {ticker, price, quantity, order_type, buy_sell});
+        dispatch({type: 'add_order', payload:res.data})
+    }catch(err){
+        return err.response.data.message
+    }
 }
 
 const deleteOrder = dispatch => async(id) => {

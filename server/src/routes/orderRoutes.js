@@ -4,6 +4,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const moment = require('moment');
 
 const Order = mongoose.model('Order')
+const Portfolio = mongoose.model('Portfolio')
 
 const router = express.Router();
 
@@ -24,6 +25,13 @@ router.post('/order', async (req, res) => {
 
     if (!ticker || !price || !quantity || !order_type || !buy_sell){
         return res.status(422).send({message: 'Please provide a ticker, price, and quantity'});
+    }
+
+    if (buy_sell === 'sell'){
+        const stock = await Portfolio.find({userId: req.user._id, ticker:ticker}) 
+        if(stock.length === 0 || stock[0].quantity < quantity){
+            return res.status(422).send({message: 'Not enough or none of that stock is owned'})
+        }
     }
 
     const order = new Order({

@@ -35,6 +35,9 @@ const BuySellForm = ({stock, value, callback}) => {
         }else{
             const err = await addOrder(ticker, orderPrice, parseInt(data.get('quantity')), orderType, name)
             if(err){
+                setInputVal({...inputVal, [ticker]:''})
+                setOrderType('Market')
+                setOrderPrice('');
                 return alert(err)
             }
         }
@@ -113,7 +116,8 @@ const BuySellForm = ({stock, value, callback}) => {
                             inputProps={{
                                 min:0, 
                                 style:{textAlign:'center'},
-                                type: 'number'
+                                type: 'number',
+                                step:'0.001'
                             }}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">$</InputAdornment>
