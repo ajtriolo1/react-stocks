@@ -1,15 +1,16 @@
 import React, {useState, useContext, useEffect} from 'react';
-import { Box, Button, TextField, Typography, Select, MenuItem, InputAdornment, FormControl, InputLabel } from '@mui/material';
+import { Box, Button, TextField, Typography, Select, MenuItem, InputAdornment, FormControl, InputLabel, Dialog, DialogTitle, DialogContentText, DialogActions } from '@mui/material';
 import {Context as PortfolioContext} from '../context/PortfolioContext'
 import {Context as OrderContext} from '../context/OrderContext'
 
 const BuySellForm = ({stock, value, callback}) => {
     const [inputVal, setInputVal] = useState({});
     const [orderType, setOrderType] = useState('Market');
-    const {state:{portfolio}, buyStock, sellStock, getPortfolio} = useContext(PortfolioContext);
+    const {state:{portfolio, balance}, buyStock, sellStock, getPortfolio, fetchBalance, deposit} = useContext(PortfolioContext);
     const {addOrder} = useContext(OrderContext);
     const [orderPrice, setOrderPrice] = useState('');
     const currentPrice = value.price.regularMarketPrice
+    const [alertOpen, setAlertOpen] = useState(false)
 
     useEffect(() => {
         getPortfolio();
@@ -21,6 +22,9 @@ const BuySellForm = ({stock, value, callback}) => {
         const data = new FormData(event.currentTarget);
         if(orderType === 'Market'){
             if (name === 'buy'){
+                if (balance < (price*parseInt(data.get('quantity')))){
+                    return setAlertOpen(true)
+                }
                 const err = await buyStock(ticker, price, parseInt(data.get('quantity')))
                 if(err){
                     return alert(err)
@@ -45,9 +49,24 @@ const BuySellForm = ({stock, value, callback}) => {
         setOrderType('Market')
         setOrderPrice('');
         getPortfolio()
+        fetchBalance()
         if(callback){
             callback(false)
         }
+    }
+
+    const onConfirm = async (price, quantity, ticker) => {
+        const required = (price*quantity)-balance
+        await deposit(required);
+        const err = await buyStock(ticker, price, parseInt(quantity))
+        if(err){
+            return alert(err)
+        }
+        setOrderType('Market')
+        setInputVal({...inputVal, [ticker]:''})
+        getPortfolio()
+        fetchBalance()
+        setAlertOpen(false)
     }
 
     return (
@@ -134,6 +153,18 @@ const BuySellForm = ({stock, value, callback}) => {
                     <Button type="submit" name="sell">Sell</Button>
                 </Box>
             </Box>
+            <Dialog open={alertOpen}>
+                <DialogTitle>
+                    Balance too low
+                </DialogTitle>
+                <DialogContentText sx={{ml:2}}>
+                    You do not have enough money in your account to buy the specified amount of shares. Would you like to deposit the required amount?
+                </DialogContentText>
+                <DialogActions>
+                    <Button onClick={() => onConfirm(currentPrice, inputVal[stock], stock)}>Sure!</Button>
+                    <Button onClick={() => {setAlertOpen(false); setInputVal({...inputVal, [stock]:''})}}>No thanks</Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

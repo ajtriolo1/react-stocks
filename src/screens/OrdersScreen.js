@@ -46,13 +46,13 @@ const OrdersScreen = () => {
         return(
             <GridFooterContainer>
                 <Tooltip title="Refresh">
-                    <IconButton onClick={handleRefresh}>
+                    <IconButton sx={{marginLeft:1}} onClick={handleRefresh}>
                         <RefreshIcon />
                     </IconButton>
                 </Tooltip>
                 <TablePagination
                     component="div"
-                    count={state.pagination.pageCount} 
+                    count={Object.entries(orderList).length} 
                     page={state.pagination.page}
                     rowsPerPageOptions={[10,20,40,80,100]}
                     onRowsPerPageChange={(event) => {
@@ -93,6 +93,7 @@ const OrdersScreen = () => {
             <NavBar />
             <DataGrid 
                 autoHeight
+                sx={{margingBottom:11}}
                 disableSelectionOnClick
                 columns={columns}
                 rows={orderList}

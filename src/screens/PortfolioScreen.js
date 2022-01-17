@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as PortfolioContext} from '../context/PortfolioContext';
-import { DataGrid, GridOverlay } from '@mui/x-data-grid';
-import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton} from '@mui/material'
+import { DataGrid, GridOverlay, GridFooterContainer } from '@mui/x-data-grid';
+import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton, TablePagination} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from '../components/BuySellForm'
 
@@ -48,7 +48,9 @@ const PortfolioScreen = () => {
     const [openStockValue, setOpenStockValue] = useState({})
     const [data, setData] = useState([]);
     const [pageSize,setPageSize] = useState(10);
+    const [paginationProps, setPaginationProps] = useState({})
     const [pageOptions, setPageOptions] = useState([10,20,40,80,100]);
+    const [totalValue, setTotalValue] = useState(0);
     const [sortModel, setSortModel] = useState([
         {
             field: 'ticker',
@@ -67,22 +69,18 @@ const PortfolioScreen = () => {
     }, [])
 
     useEffect(() => {
-        console.log('here')
         let vals = Object.values(portfolio)
+        var total = 0
         vals.forEach((val) => {
             if(portfolioQuotes[val.ticker]){
-                if(portfolioQuotes[val.ticker].price.regularMarketPrice > 1.0){
-                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total))
-                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
-                    val['total'] = parseFloat(val['total'])
-                }else{
-                    val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total))
-                    val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
-                    val['total'] = parseFloat(val['total'])
-                }
+                val['gains'] = ((val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice) - (val.total))
+                val['currentValue'] = (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
+                total += (val.quantity*portfolioQuotes[val.ticker].price.regularMarketPrice)
+                val['total'] = parseFloat(val['total'])
                 val['currentPrice'] = portfolioQuotes[val.ticker].price.regularMarketPrice
             }
         })
+        setTotalValue(total)
         setData(vals)
     }, [JSON.stringify(portfolioQuotes), JSON.stringify(portfolio)])
 
@@ -111,7 +109,8 @@ const PortfolioScreen = () => {
                     },
                     '& .zero':{
                         color:'gray'
-                    }
+                    },
+                    margingBottom:11
                 }} 
                 autoHeight
                 columns={columns}

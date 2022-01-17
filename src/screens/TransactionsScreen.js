@@ -9,7 +9,7 @@ const columns = [
     {field: 'ticker', headerName:'Stock', flex:1},
     {field: 'quantity', headerName:'Quantity', flex:1},
     {field: 'price', headerName:'Stock Price', flex:1, valueFormatter: ({value}) => value < 1.0 ? `$${value}`: `$${value.toFixed(2)}`},
-    {field: 'total', headerName: 'Spent/Gained', flex:1},
+    {field: 'str_total', headerName: 'Spent/Gained', flex:1},
     {field:'date', headerName:'Date', flex:1, type:'dateTime', valueGetter: ({value}) => value && moment(value, 'MMMM Do YYYY, h:mm:ss a').toDate()}
 
 ]
@@ -53,6 +53,7 @@ const TransactionsScreen = () => {
                     }}>
                     <DataGrid
                         autoHeight
+                        sx={{marginBottom:11}}
                         columns={columns}
                         components={{
                             NoRowsOverlay: CustomNoRowsOverlay
@@ -65,7 +66,7 @@ const TransactionsScreen = () => {
                         onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
                         pageSize={pageSize}
                         getCellClassName={(params) => {
-                            if(params.field !== 'total'){
+                            if(params.field !== 'str_total'){
                                 return ''
                             }
                             return params.value.includes('-') ? 'buy' : 'sell'

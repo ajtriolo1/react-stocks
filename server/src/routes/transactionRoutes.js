@@ -7,6 +7,7 @@ var bigdecimal = require('bigdecimal')
 
 const Transaction = mongoose.model('Transaction');
 const Portfolio = mongoose.model('Portfolio');
+const User = mongoose.model('User')
 
 const router = express.Router();
 
@@ -23,52 +24,9 @@ router.get('/transactions', async (req, res) => {
 
 })
 
-router.get('/portfolio', async (req, res) => {
-    const portfolio = await Portfolio.find({userId: req.user._id})
-
-    if(portfolio.length === 0){
-        res.send([])
-    }
-
-    var result = {}
-
-    portfolio.forEach((stock) => {
-        result[stock.ticker] = stock
-    })
-
-    res.send(result)
-    
-})
-
-router.get('/portfolio/quotes', async (req, res) => {
-    const portfolio = await Portfolio.find({userId: req.user._id})
-    let tickers = []
-
-    if(portfolio.length === 0){
-        res.send([])
-    }
-
-    portfolio.forEach((stock) => {
-        tickers.push(stock.ticker)
-    })
-
-    yahooFinance.quote(
-        {
-            symbols: tickers,
-            modules: ['price']
-        },
-        function (err, quotes) {
-            if (err){
-                return res.status(422).send({error: 'Error fetching stock info'})
-            }
-            res.send(quotes);
-            res.end();
-        }
-    );
-})
-
 router.post('/sell', async (req, res) => {
     const {ticker, price, quantity} = req.body;
+    
 
     if (!ticker || !price || !quantity){
         return res.status(422).send({message: 'Please provide a ticker, price, and quantity'});
@@ -76,6 +34,7 @@ router.post('/sell', async (req, res) => {
 
     const buys = await Transaction.find({userId: req.user._id, ticker:ticker, transaction_type:'buy', owned:{$gt:0}})
     const stock = await Portfolio.find({userId: req.user._id, ticker:ticker})
+    const user = await User.findById(req.user._id)
 
     if(stock.length === 0 || stock[0].quantity < quantity){
         return res.status(422).send({message: 'Not enough or none of that stock is owned'})
@@ -136,6 +95,7 @@ router.post('/sell', async (req, res) => {
             await Portfolio.findOneAndUpdate({userId: req.user._id, ticker: ticker}, {quantity:newQuantity, total:newTotal})
         }
         await transaction.save()
+        await User.findByIdAndUpdate(req.user._id, {balance:user.balance+(price*quantity)})
         res.send('Success!')
     }catch(err){
         res.status(422).send({message: err.message})
@@ -151,6 +111,7 @@ router.post('/buy', async (req, res) => {
     }
 
     const stock = await Portfolio.find({userId: req.user._id, ticker:ticker})
+    const user = await User.findById(req.user._id)
 
     if(stock.length === 0){
         const item = new Portfolio({
@@ -185,6 +146,7 @@ router.post('/buy', async (req, res) => {
     
     try{
         await transaction.save()
+        await User.findByIdAndUpdate(req.user._id, {balance:user.balance-(price*quantity)})
         res.send('Success!')
     }catch(err){
         res.status(422).send({message: err.message})

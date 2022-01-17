@@ -11,14 +11,18 @@ db=client.StocksDatabase
 orders = db.orders
 portfolios = db.portfolios
 transactions = db.transactions
+users = db.users
 
 while(1):
     for order in orders.find():
         userId, ticker, limitPrice, quantity = order['userId'], order['ticker'], order['price'], order['quantity']
         currentPrice = yf.Ticker(ticker).info['regularMarketPrice']
         portfolio = list(portfolios.find({'userId':userId, 'ticker':ticker}))
+        user = users.find_one({'_id':userId})
         if order['order_type'] == 'Limit':
             if order['buy_sell'] == 'buy':
+                if(user['balance'] < currentPrice*quantity):
+                    continue
                 if currentPrice <= limitPrice:
                     transactions.insert_one({
                         'userId':userId, 

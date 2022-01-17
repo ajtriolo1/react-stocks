@@ -4,20 +4,25 @@ import stocksApi from '../api/stocks';
 const portfolioReducer = (state, action) => {
     switch (action.type){
         case 'fetch_transactions':
-            action.payload.forEach((transaction) => {
-                if(transaction.total > 1.0){
-                    transaction.total = transaction.transaction_type === 'buy' ? `-$${transaction.total.toFixed(2)}` : `+$${transaction.total.toFixed(2)}`
+            var transactions = action.payload
+            transactions.forEach((transaction) => {
+                if(transaction.transaction_type === 'buy'){
+                    transaction.str_total = `-$${transaction.total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
                 }else{
-                    transaction.total = transaction.transaction_type === 'buy' ? `-$${transaction.total}` : `+$${transaction.total}`
-                }  
+                    transaction.str_total = `$${transaction.total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
+                }
             })
-            return {...state, transactionList:action.payload}
+            return {...state, transactionList:transactions}
         case 'fetch_portfolio':
             return {...state, portfolio:action.payload}
         case 'fetch_quotes':
             return {...state, portfolioQuotes:action.payload, loadingQuotes:false}
         case 'set_loading':
             return {...state, loadingQuotes:true}
+        case 'fetch_balance':
+            return {...state, balance:action.payload}
+        case 'deposit':
+            return {...state, balance:parseFloat(action.payload)}
         default:
             return state
     }
@@ -64,8 +69,22 @@ const sellStock = dispatch => async (ticker, price, quantity) => {
     }
 }
 
+const fetchBalance = dispatch => async() => {
+    try{
+        const res = await stocksApi.get('/balance')
+        dispatch({type:'fetch_balance', payload:res.data.balance})
+    }catch (err){
+        return err.response.data.message
+    }
+}
+
+const deposit = dispatch => async(amount) => {
+    const res = await stocksApi.post('/deposit', {amount})
+    dispatch({type:'deposit', payload: res.data.balance})
+}
+
 export const {Provider, Context} = createDataContext(
     portfolioReducer,
-    {getTransactions, buyStock, sellStock, getPortfolio, getPortfolioQuotes},
-    {transactionList: [], portfolio:{}, portfolioQuotes:{}, loadingQuotes:true}
+    {getTransactions, buyStock, sellStock, getPortfolio, getPortfolioQuotes, fetchBalance, deposit},
+    {transactionList: [], portfolio:{}, portfolioQuotes:{}, loadingQuotes:true, balance:0.0}
 )
