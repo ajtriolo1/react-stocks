@@ -1,8 +1,8 @@
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as OrderContext} from '../context/OrderContext'
-import { DataGrid, GridOverlay, GridFooterContainer, useGridApiContext, useGridState } from '@mui/x-data-grid';
-import { Button, IconButton, LinearProgress, TablePagination, Tooltip } from '@mui/material';
+import { DataGrid, GridOverlay, GridFooterContainer, GridFooter } from '@mui/x-data-grid';
+import { IconButton, LinearProgress, Tooltip } from '@mui/material';
 import moment from 'moment'
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -21,11 +21,27 @@ function CustomLoadingOverlay() {
     );
 }
 
+const CustomFooter = (props) => {
+    const {callback, ...rest} = props
+    return (
+        <GridFooterContainer>
+            <Tooltip title="Refresh">
+                <IconButton sx={{marginLeft:1}} onClick={callback}>
+                    <RefreshIcon />
+                </IconButton>
+            </Tooltip>
+            <GridFooter {...rest}/>
+        </GridFooterContainer>
+    )
+    
+}
+
 
 const OrdersScreen = () => {
     const {state:{orderList}, fetchOrders, deleteOrder} = useContext(OrderContext);
     const [loading, setLoading] = useState(false)
     const [pageSize,setPageSize] = useState(10);
+    const pageOptions = [10,20,40,80,100];
     const [sortModel, setSortModel] = useState([
         {
             field: 'date',
@@ -37,33 +53,6 @@ const OrdersScreen = () => {
         setLoading(true)
         await fetchOrders()
         setLoading(false)
-    }
-
-    const CustomFooter = () => {
-        const apiRef = useGridApiContext();
-        const state = apiRef.current.state
-        
-        return(
-            <GridFooterContainer>
-                <Tooltip title="Refresh">
-                    <IconButton sx={{marginLeft:1}} onClick={handleRefresh}>
-                        <RefreshIcon />
-                    </IconButton>
-                </Tooltip>
-                <TablePagination
-                    component="div"
-                    count={Object.entries(orderList).length} 
-                    page={state.pagination.page}
-                    rowsPerPageOptions={[10,20,40,80,100]}
-                    onRowsPerPageChange={(event) => {
-                        setPageSize(event.target.value)
-                        apiRef.current.setPage(0)
-                    }}
-                    rowsPerPage={pageSize}
-                    onPageChange={(event, value) => apiRef.current.setPage(value)}
-                />
-            </GridFooterContainer>
-        )
     }
 
     const columns = [
@@ -99,10 +88,13 @@ const OrdersScreen = () => {
                 rows={orderList}
                 loading={loading}
                 sortModel={sortModel}
+                rowsPerPageOptions={pageOptions}
+                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                pageSize={pageSize}
                 onSortModelChange={(model) => setSortModel(model)}
                 getRowId={(row) => row._id}
                 components={{
-                    Footer: CustomFooter,
+                    Footer: (props) => <CustomFooter callback={handleRefresh} {...props}/>,
                     LoadingOverlay: CustomLoadingOverlay
                 }}
                 

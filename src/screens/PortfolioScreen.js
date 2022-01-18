@@ -1,20 +1,20 @@
 import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as PortfolioContext} from '../context/PortfolioContext';
-import { DataGrid, GridOverlay, GridFooterContainer } from '@mui/x-data-grid';
-import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton, TablePagination} from '@mui/material'
+import { DataGrid, GridOverlay, GridFooterContainer, GridFooter } from '@mui/x-data-grid';
+import {Typography, Dialog, DialogTitle, DialogContent, Box, IconButton} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from '../components/BuySellForm'
 
 const gainFormatter = (params) => {
     if (params.value < 0) {
-        if (Math.abs(params.value) > 0.01){
+        if (Math.abs(params.value) > 1.0){
             return `-$${Math.abs(params.value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
         }else{
             return `-$${Math.abs(params.value).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
         }  
     }else if (params.value > 0){
-        if (params.value > 0.01){
+        if (params.value > 1.0){
             return `$${params.value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
         }else{
             return `$${params.value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 10})}`
@@ -41,6 +41,17 @@ const CustomNoRowsOverlay = () => {
     )
 }
 
+const CustomFooter = (props) => {
+    const {totalValue, ...rest} = props
+
+    return (
+        <GridFooterContainer>
+            <Typography marginLeft={2}>{`Portfolio Value: $${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`}</Typography>
+            <GridFooter {...rest} />
+        </GridFooterContainer>
+    )
+}
+
 const PortfolioScreen = () => {
     const {state:{portfolio, portfolioQuotes}, getPortfolio, getPortfolioQuotes} = useContext(PortfolioContext)
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -48,7 +59,6 @@ const PortfolioScreen = () => {
     const [openStockValue, setOpenStockValue] = useState({})
     const [data, setData] = useState([]);
     const [pageSize,setPageSize] = useState(10);
-    const [paginationProps, setPaginationProps] = useState({})
     const [pageOptions, setPageOptions] = useState([10,20,40,80,100]);
     const [totalValue, setTotalValue] = useState(0);
     const [sortModel, setSortModel] = useState([
@@ -116,6 +126,7 @@ const PortfolioScreen = () => {
                 columns={columns}
                 rows={data}
                 components={{
+                    Footer: (props) => <CustomFooter totalValue={totalValue} {...props}/>,
                     NoRowsOverlay: CustomNoRowsOverlay
                 }}
                 disableSelectionOnClick
