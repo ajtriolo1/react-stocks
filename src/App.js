@@ -18,6 +18,7 @@ import TransactionsScreen from './screens/TransactionsScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
 import OrdersScreen from './screens/OrdersScreen'
 import SingleStock from './screens/SingleStock';
+import NavBar from './components/NavBar'
 
 function App() {
 

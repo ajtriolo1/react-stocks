@@ -23,13 +23,13 @@ const ChartScreen = () => {
             <NavBar/>
             <AddStock />
             {chartList.length === 0 
-                ? <Box display="flex" justifyContent="center">
+                ? <Box display="flex" alignItem='center' justifyContent="center">
                     <CircularProgress />
                 </Box>
                 :
                 <Grid container spacing={2}>
                     {chartList.map((chart, index) => (
-                        <Grid container item xs={5.9} key={index} direction="column">
+                        <Grid container item xs={12} lg={5.9} key={index} direction="column">
                             <IconButton sx={{alignSelf:'flex-end'}} color="primary" onClick={() => onDeleteClick(chart.key)}>
                                 <CancelSharpIcon fontSize="large"/>
                             </IconButton>

@@ -98,11 +98,11 @@ const ListScreen = () => {
                                 </IconButton>
                             </AccordionSummary>
                             <AccordionDetails sx={{display: 'flex', flexDirection:'column'}}>
-                                <Grid container spacing={1}>
-                                    <Grid container item xs={5.9} direction="column">
+                                <Grid container spacing={0}>
+                                    <Grid container item xs={12} lg={6} direction="column">
                                         {chartList.find(element => element.props.id === key)}
                                     </Grid>
-                                    <Grid container item xs={5.9} direction="column">
+                                    <Grid container item xs={12} lg={6} direction="column">
                                         <BuySellForm stock={key} value={value}/>
                                     </Grid>
                                 </Grid>   

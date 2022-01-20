@@ -26,7 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 const NavBar = () => {
     const navigate = useNavigate();
     const {signout} = useContext(AuthContext)
-    const {resetStocks} = useContext(StockContext);
+    const {resetStocks, fetchStocks, fetchList} = useContext(StockContext);
     const {state:{balance}, fetchBalance, deposit, resetPortfolio} = useContext(PortfolioContext)
     const [anchorEl, setAnchorEl] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -35,6 +35,8 @@ const NavBar = () => {
     
     useEffect(() => {
         fetchBalance();
+        // fetchStocks();
+        // fetchList();
     }, [])
 
     const onSignoutClick = () => {
@@ -71,7 +73,7 @@ const NavBar = () => {
                         Charts
                     </Button>
                     <Button sx={{ my: 2, color: 'white', display: 'block' }} key="list" onClick={() => navigate('/list')}>
-                        List
+                        Watchlist
                     </Button>
                     <Button sx={{ my: 2, color: 'white', display: 'block' }} key="portfolio" onClick={() => navigate('/portfolio')}>
                         Portfolio
@@ -80,10 +82,10 @@ const NavBar = () => {
                         Orders
                     </Button>
                     <Box sx={{display:'flex', my:2, position:'absolute', right:30}}>
-                        <Box sx={{mr:6}} component="form" onSubmit={(event) => {event.preventDefault(); navigate(`/stock/${searchStock}`)}}>
+                        <Box sx={{mr:6}} component="form" onSubmit={(event) => {event.preventDefault(); setSearchStock(''); navigate(`/stock/${searchStock}`)}}>
                             <TextField 
                                 value={searchStock}
-                                placeholder='Search...'
+                                placeholder='Ticker...'
                                 onChangeCapture={(event) => setSearchStock(event.target.value)}
                                 InputProps={{
                                     startAdornment: (

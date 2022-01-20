@@ -163,7 +163,7 @@ router.post('/stocks', async (req, res) => {
     }
 })
 
-router.get('/stock/:ticker', async (req, res) => {
+router.get('/historical/:ticker', async (req, res) => {
     const ticker = req.params.ticker
 
     var results = {}
@@ -198,8 +198,26 @@ router.get('/stock/:ticker', async (req, res) => {
             setTimeout(() => {console.log('error')}, 1000)
         }
     }
-    console.log(results)
+    
     res.send(results)
+})
+
+router.get('/quote/:ticker', (req, res) => {
+    const ticker = req.params.ticker
+
+    yahooFinance.quote(
+        {
+            symbol: ticker,
+            modules: ['price']
+        },
+        function (err, quotes) {
+            if (err){
+                return res.status(422).send({error: 'Error fetching stock info'})
+            }
+            res.send(quotes);
+            res.end();
+        }
+    );
 })
 
 router.delete('/stocks/:ticker', async (req, res) => {

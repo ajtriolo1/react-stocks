@@ -77,7 +77,7 @@ const BuySellForm = ({stock, value, callback}) => {
                 : null
             }
             <Box component="form" sx={{display: 'flex', m: 'auto'}} onSubmit={(event) => onSubmit(event, currentPrice, stock)}>
-                <Box sx={{display:'flex', flexDirection:'column', mb:8}}>
+                <Box sx={{display:'flex', flexDirection:'column', mb:6}}>
                     <Box my={2} display={"flex"} justifyContent={'center'}>
                         <Typography variant="h3">{currentPrice > 1.0 ? `$${currentPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}` : `$${currentPrice}`}</Typography>
                     </Box> 

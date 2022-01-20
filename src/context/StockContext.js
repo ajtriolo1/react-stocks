@@ -1,7 +1,6 @@
 import createDataContext from "./createDataContext";
 import stocksApi from '../api/stocks';
 import StockChart from "../components/StockChart";
-import FullscreenChart from "../components/FullscreenChart";
 
 const stockReducer = (state, action) => {
     switch(action.type){
@@ -35,18 +34,22 @@ const stockReducer = (state, action) => {
             return {...state, chartList: [...state.chartList, chart], tickerList:[...state.tickerList, ticker]}
         case 'delete_stock':
             return {
+                ...state,
                 stocksList: Object.fromEntries(Object.entries(state.stocksList).filter(([key]) => key !== action.payload)),
                 chartList: state.chartList.filter(element => element.props.id !== action.payload), 
                 tickerList: state.tickerList.filter(element => element !== action.payload),
             }
         case 'fetch_list':
-            return{...state, stocksList:action.payload}
+            const ticks = Object.keys(action.payload)
+            return{...state, stocksList:action.payload, tickerList:ticks}
         case 'reset':
-            return {stocksList:{}, chartList:[], tickerList:[]}
-        case 'single_stock':
-            return {...state, singleStock:action.payload}
+            return {stocksList:{}, chartList:[], tickerList:[], singleStockHistorical:null}
+        case 'single_stock_hist':
+            return {...state, singleStockHistorical:action.payload}
+        case 'single_stock_quote':
+            return {...state, singleStockQuote:action.payload}
         case 'reset_single':
-            return {...state, singleStock:null}
+            return {...state, singleStock:null, singleStockQuote:null}
         // case 'selected_interval':
         //     const selectedTicker = action.payload.ticker
         //     const newInterval = action.payload.interval
@@ -80,9 +83,14 @@ const fetchList = dispatch => async() => {
     dispatch({type:'fetch_list', payload:res.data})
 }
 
-const getSingleStock = dispatch => async(ticker) => {
-    const res = await stocksApi.get(`/stock/${ticker}`)
-    dispatch({type:'single_stock', payload:res.data[ticker]})
+const getSingleStockHistorical = dispatch => async(ticker) => {
+    const res = await stocksApi.get(`/historical/${ticker}`)
+    dispatch({type:'single_stock_hist', payload:res.data[ticker]})
+}
+
+const getSingleStockQuote = dispatch => async(ticker) => {
+    const res = await stocksApi.get(`/quote/${ticker}`)
+    dispatch({type:'single_stock_quote', payload:res.data})
 }
 
 const resetSingleStock = dispatch => () => {
@@ -96,6 +104,6 @@ const resetSingleStock = dispatch => () => {
 
 export const {Provider, Context} = createDataContext(
     stockReducer,
-    {fetchStocks, addStock, deleteStock, resetStocks, fetchList, getSingleStock, resetSingleStock},
-    {chartList:[], tickerList:[], stocksList:{}, singleStock:null}
+    {fetchStocks, addStock, deleteStock, resetStocks, fetchList, getSingleStockHistorical, getSingleStockQuote, resetSingleStock},
+    {chartList:[], tickerList:[], stocksList:{}, singleStockHistorical:null, singleStockQuote:null}
 )

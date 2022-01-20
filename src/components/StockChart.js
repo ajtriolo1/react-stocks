@@ -3,6 +3,7 @@ import Plot from "react-plotly.js";
 import { useTheme } from '@mui/material/styles';
 import { ButtonGroup, Button } from "@mui/material";
 import {Context as StockContext} from '../context/StockContext';
+import moment from 'moment';
 
 
 const StockChart = ({ data, ticker }) => {
@@ -22,14 +23,19 @@ const StockChart = ({ data, ticker }) => {
         plot_bgcolor: theme.palette.background.default, 
         paper_bgcolor: theme.palette.background.paper, 
         xaxis:{color:theme.palette.text.primary},
-        yaxis:{color:theme.palette.text.primary}
+        yaxis:{color:theme.palette.text.primary},
+        autosize: true
     });
 
     const getData = async () => {
         //const data_interval = data[selectedIntervals[ticker]]['quotes']
         const data_interval = data[selectedInterval]['quotes']
         data_interval.forEach(element => {
-            setDates(dates => [...dates, element.date]);
+            if (selectedInterval !== '1d' && selectedInterval !== '1wk'){
+                setDates(dates => [...dates, element.date.split('T')[0]])
+            }else{
+                setDates(dates => [...dates, moment(element.date).format()]);
+            }
             setPrices(prices => [...prices, element.close]);
         })
     }
@@ -52,7 +58,8 @@ const StockChart = ({ data, ticker }) => {
             plot_bgcolor: theme.palette.background.default, 
             paper_bgcolor: theme.palette.background.paper, 
             xaxis:{color:theme.palette.text.primary},
-            yaxis:{color:theme.palette.text.primary} 
+            yaxis:{color:theme.palette.text.primary},
+            autosize: true
         })
     }, [theme])
 
@@ -74,6 +81,8 @@ const StockChart = ({ data, ticker }) => {
                         mode:'lines'
                     }
                 ]}
+                style={{width:'100%'}}
+                useResizeHandler={true}
                 layout={layout}
                 config={{
                     displayModeBar: false
