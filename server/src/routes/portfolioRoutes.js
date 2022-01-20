@@ -14,7 +14,7 @@ router.get('/portfolio', async (req, res) => {
     const portfolio = await Portfolio.find({userId: req.user._id})
 
     if(portfolio.length === 0){
-        res.send([])
+        return res.send([])
     }
 
     var result = {}
@@ -32,7 +32,7 @@ router.get('/portfolio/quotes', async (req, res) => {
     let tickers = []
 
     if(portfolio.length === 0){
-        res.send([])
+        return res.send([])
     }
 
     portfolio.forEach((stock) => {

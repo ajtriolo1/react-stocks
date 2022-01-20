@@ -16,13 +16,13 @@ const portfolioReducer = (state, action) => {
         case 'fetch_portfolio':
             return {...state, portfolio:action.payload}
         case 'fetch_quotes':
-            return {...state, portfolioQuotes:action.payload, loadingQuotes:false}
-        case 'set_loading':
-            return {...state, loadingQuotes:true}
+            return {...state, portfolioQuotes:action.payload}
         case 'fetch_balance':
             return {...state, balance:action.payload}
         case 'deposit':
             return {...state, balance:parseFloat(action.payload)}
+        case 'reset':
+            return {transactionList: [], portfolio:{}, portfolioQuotes:{}, balance:0.0}
         default:
             return state
     }
@@ -39,7 +39,6 @@ const getPortfolio = dispatch => async () => {
 }
 
 const getPortfolioQuotes = dispatch => async () => {
-    dispatch({type:'set_loading'})
     const res = await stocksApi.get('/portfolio/quotes')
     dispatch({type:'fetch_quotes', payload:res.data})
 }
@@ -83,8 +82,13 @@ const deposit = dispatch => async(amount) => {
     dispatch({type:'deposit', payload: res.data.balance})
 }
 
+const resetPortfolio = dispatch => () => {
+    dispatch({type:'reset'})
+}
+
+
 export const {Provider, Context} = createDataContext(
     portfolioReducer,
-    {getTransactions, buyStock, sellStock, getPortfolio, getPortfolioQuotes, fetchBalance, deposit},
-    {transactionList: [], portfolio:{}, portfolioQuotes:{}, loadingQuotes:true, balance:0.0}
+    {getTransactions, buyStock, sellStock, getPortfolio, getPortfolioQuotes, fetchBalance, deposit, resetPortfolio},
+    {transactionList: [], portfolio:{}, portfolioQuotes:{}, balance:0.0}
 )

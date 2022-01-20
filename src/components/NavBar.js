@@ -21,16 +21,17 @@ import {Context as PortfolioContext} from '../context/PortfolioContext'
 import { useNavigate } from 'react-router-dom';
 import { AccountCircle } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import CloseIcon from '@mui/icons-material/Close';
+import SearchIcon from '@mui/icons-material/Search';
 
 const NavBar = () => {
     const navigate = useNavigate();
     const {signout} = useContext(AuthContext)
     const {resetStocks} = useContext(StockContext);
-    const {state:{balance}, fetchBalance, deposit} = useContext(PortfolioContext)
+    const {state:{balance}, fetchBalance, deposit, resetPortfolio} = useContext(PortfolioContext)
     const [anchorEl, setAnchorEl] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [depositAmount, setDepositAmount] = useState('')
+    const [searchStock, setSearchStock] = useState('')
     
     useEffect(() => {
         fetchBalance();
@@ -39,6 +40,7 @@ const NavBar = () => {
     const onSignoutClick = () => {
         signout(navigate);
         resetStocks();
+        resetPortfolio();
         setAnchorEl(null);
     }
 
@@ -78,6 +80,20 @@ const NavBar = () => {
                         Orders
                     </Button>
                     <Box sx={{display:'flex', my:2, position:'absolute', right:30}}>
+                        <Box sx={{mr:6}} component="form" onSubmit={(event) => {event.preventDefault(); navigate(`/stock/${searchStock}`)}}>
+                            <TextField 
+                                value={searchStock}
+                                placeholder='Search...'
+                                onChangeCapture={(event) => setSearchStock(event.target.value)}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        </Box>
                         <Link 
                             sx={{mt:'1.5px', mr:'30px'}} 
                             alignSelf="center" 

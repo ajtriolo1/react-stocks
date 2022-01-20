@@ -1,16 +1,13 @@
-import React, {useEffect, useState, useContext} from "react";
+import { Box, ButtonGroup, Button } from '@mui/material';
+import React, {useState, useEffect} from 'react';
 import Plot from "react-plotly.js";
 import { useTheme } from '@mui/material/styles';
-import { ButtonGroup, Button } from "@mui/material";
-import {Context as StockContext} from '../context/StockContext';
 
-
-const StockChart = ({ data, ticker }) => {
-    //const {state:{selectedIntervals}, setSelectedInterval} = useContext(StockContext)
+const FullscreenChart = ({data, ticker}) => {
     const [selectedInterval, setSelectedInterval] = useState('1d')
-    const theme = useTheme();
     const [dates, setDates] = useState([]);
     const [prices, setPrices] = useState([]);
+    const theme = useTheme();
     const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
     const [layout, setLayout] = useState({
         title:{
@@ -22,11 +19,11 @@ const StockChart = ({ data, ticker }) => {
         plot_bgcolor: theme.palette.background.default, 
         paper_bgcolor: theme.palette.background.paper, 
         xaxis:{color:theme.palette.text.primary},
-        yaxis:{color:theme.palette.text.primary}
+        yaxis:{color:theme.palette.text.primary},
+        autosize:true
     });
 
     const getData = async () => {
-        //const data_interval = data[selectedIntervals[ticker]]['quotes']
         const data_interval = data[selectedInterval]['quotes']
         data_interval.forEach(element => {
             setDates(dates => [...dates, element.date]);
@@ -38,8 +35,8 @@ const StockChart = ({ data, ticker }) => {
         setDates([]);
         setPrices([]);
         getData();
-    }, [selectedInterval])
-    // }, [selectedIntervals[ticker]]);
+        console.log('here')
+    }, [selectedInterval, JSON.stringify(data)])
 
     useEffect(() => {
         setLayout({
@@ -52,13 +49,13 @@ const StockChart = ({ data, ticker }) => {
             plot_bgcolor: theme.palette.background.default, 
             paper_bgcolor: theme.palette.background.paper, 
             xaxis:{color:theme.palette.text.primary},
-            yaxis:{color:theme.palette.text.primary} 
+            yaxis:{color:theme.palette.text.primary},
+            autosize:true
         })
-    }, [theme])
-
+    }, [theme, ticker])
 
     return (
-        <>
+        <Box sx={{width:'auto'}} display="flex" flexDirection="column" marginTop={2} flex={1}>
             <ButtonGroup sx={{paddingRight:10, alignSelf:'flex-end'}} variant="outlined">
                 {intervals.map((value, index) => (
                     // <Button key={value} variant={selectedIntervals[ticker] === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval({ticker, interval:value})}>{value}</Button>    
@@ -66,11 +63,12 @@ const StockChart = ({ data, ticker }) => {
                 ))}
             </ButtonGroup>
             <Plot
+                style={{display:'flex', width:'auto', flex:1}} 
                 data={[
                     {
                         x: dates,
                         y: prices,
-                        type: 'scatter',
+                        type:'scatter',
                         mode:'lines'
                     }
                 ]}
@@ -79,9 +77,8 @@ const StockChart = ({ data, ticker }) => {
                     displayModeBar: false
                 }}
             />
-        </>
-        
-    )
-}
+        </Box>
+    );
+};
 
-export default StockChart
+export default FullscreenChart;

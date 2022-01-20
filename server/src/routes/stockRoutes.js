@@ -163,6 +163,45 @@ router.post('/stocks', async (req, res) => {
     }
 })
 
+router.get('/stock/:ticker', async (req, res) => {
+    const ticker = req.params.ticker
+
+    var results = {}
+
+    for(let i=0; i<100; i++){
+        try{
+            results[ticker] = {
+                "1d": await yahooFinance2._chart(ticker, {
+                    period1: moment().format('YYYY-MM-DD') + "T14:30:00.000Z",
+                    period2: moment().format(),
+                    interval:'15m'
+                    }, {validateResult: false}),
+                "1wk":await yahooFinance2._chart(ticker, {
+                    period1: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+                    interval:'1h'
+                }, {validateResult: false}),
+                "1mo": await yahooFinance2._chart(ticker, {
+                    period1: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+                    interval:'1d'
+                }, {validateResult: false}),
+                "3mo": await yahooFinance2._chart(ticker, {
+                    period1: moment().subtract(3, 'months').format('YYYY-MM-DD'),
+                    interval:'1d'
+                }, {validateResult: false}),
+                "1yr": await yahooFinance2._chart(ticker, {
+                    period1: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+                    interval:'1d'
+                }, {validateResult: false})
+            };
+            break;
+        }catch (err){
+            setTimeout(() => {console.log('error')}, 1000)
+        }
+    }
+    console.log(results)
+    res.send(results)
+})
+
 router.delete('/stocks/:ticker', async (req, res) => {
     const ticker = req.params.ticker;
     await Stock.findOneAndDelete({

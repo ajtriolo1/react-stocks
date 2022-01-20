@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, IconButton } from '@mui/material';
+import { Box, Grid, Typography, Button, IconButton, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -57,7 +57,7 @@ const ListScreen = () => {
         if (chartList.length === 0){
             fetchStocks();
         }
-        fetchList()
+        fetchList();
         const interval = setInterval(() => {
             fetchList()
         }, 60000)
@@ -78,32 +78,39 @@ const ListScreen = () => {
         <>
             <NavBar />
             <AddStock />
-            {Object.entries(stocksList).map(([key, value]) => (
-                <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)}>
-                    <AccordionSummary sx={{height:'60px'}} id={key}>
-                        <Typography sx={{width:'97%', flexShrink:0, alignSelf:'center', mt:'1px'}}>
-                            {
-                            value.price.regularMarketPrice > 1.0 
-                            ? `${value.price.shortName}: $${value.price.regularMarketPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
-                            : `${value.price.shortName}: $${value.price.regularMarketPrice}`
-                            }
-                        </Typography>
-                        <IconButton sx={{alignSelf:'center'}} onClick={(event) => onDeleteClick(event, key)}>
-                            <RemoveCircleOutlineSharpIcon />
-                        </IconButton>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{display: 'flex', flexDirection:'column'}}>
-                        <Grid container spacing={1}>
-                            <Grid container item xs={5.9} direction="column">
-                                {chartList.find(element => element.props.id === key)}
-                            </Grid>
-                            <Grid container item xs={5.9} direction="column">
-                                <BuySellForm stock={key} value={value}/>
-                            </Grid>
-                        </Grid>   
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+            {Object.entries(stocksList).length === 0 
+                ? <Box display="flex" justifyContent="center">
+                    <CircularProgress />
+                </Box>
+                : <Box>
+                    {Object.entries(stocksList).map(([key, value]) => (
+                        <Accordion key={key} expanded={expanded === key} onChange={handleChange(key)} TransitionProps={{unmountOnExit: true}}>
+                            <AccordionSummary sx={{height:'60px'}} id={key}>
+                                <Typography sx={{width:'97%', flexShrink:0, alignSelf:'center', mt:'1px'}}>
+                                    {
+                                    value.price.regularMarketPrice > 1.0 
+                                    ? `${value.price.shortName}: $${value.price.regularMarketPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 3})}`
+                                    : `${value.price.shortName}: $${value.price.regularMarketPrice}`
+                                    }
+                                </Typography>
+                                <IconButton sx={{alignSelf:'center'}} onClick={(event) => onDeleteClick(event, key)}>
+                                    <RemoveCircleOutlineSharpIcon />
+                                </IconButton>
+                            </AccordionSummary>
+                            <AccordionDetails sx={{display: 'flex', flexDirection:'column'}}>
+                                <Grid container spacing={1}>
+                                    <Grid container item xs={5.9} direction="column">
+                                        {chartList.find(element => element.props.id === key)}
+                                    </Grid>
+                                    <Grid container item xs={5.9} direction="column">
+                                        <BuySellForm stock={key} value={value}/>
+                                    </Grid>
+                                </Grid>   
+                            </AccordionDetails>
+                        </Accordion>
+                    ))}
+                </Box>
+            }
         </>
     )
 }

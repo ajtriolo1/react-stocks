@@ -17,6 +17,7 @@ import AccountScreen from './screens/AccountScreen';
 import TransactionsScreen from './screens/TransactionsScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
 import OrdersScreen from './screens/OrdersScreen'
+import SingleStock from './screens/SingleStock';
 
 function App() {
 
@@ -52,6 +53,7 @@ function App() {
                     <Route path='/transactions' element={<TransactionsScreen/>}/>
                     <Route path='/portfolio' element={<PortfolioScreen/>}/>
                     <Route path='/orders' element={<OrdersScreen/>}/>
+                    <Route path='stock/:ticker' element={<SingleStock/>}/>
                   </Routes>
                   <Fab 
                     sx={{
