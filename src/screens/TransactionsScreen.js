@@ -40,20 +40,18 @@ const TransactionsScreen = () => {
     return (
         <>
             <NavBar/>
-            <Box sx={{display: 'flex', height: '100%'}}>
                 <Box 
                     sx={{
-                        flexGrow:1,
                         '& .buy':{
                             color: 'red'
                         },
                         '& .sell': {
                             color:'green'
-                        }
+                        },
+                        paddingBottom:11
                     }}>
                     <DataGrid
                         autoHeight
-                        sx={{marginBottom:11}}
                         columns={columns}
                         components={{
                             NoRowsOverlay: CustomNoRowsOverlay
@@ -73,7 +71,6 @@ const TransactionsScreen = () => {
                         }}
                     />
                 </Box>
-            </Box>
         </>
     );
 };

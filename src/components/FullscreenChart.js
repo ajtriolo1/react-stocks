@@ -1,4 +1,4 @@
-import { Box, ButtonGroup, Button } from '@mui/material';
+import { Box, ButtonGroup, Button, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import React, {useState, useEffect, useContext} from 'react';
 import Plot from "react-plotly.js";
@@ -7,12 +7,15 @@ import moment from 'moment';
 import {Context as StockContext} from '../context/StockContext'
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import CloseIcon from '@mui/icons-material/Close';
+import BuySellForm from './BuySellForm';
 
 const FullscreenChart = ({data, ticker}) => {
     const [selectedInterval, setSelectedInterval] = useState('1d')
-    const {state:{tickerList}, addStock, deleteStock} = useContext(StockContext)
+    const {state:{tickerList, singleStockQuote}, addStock, deleteStock, getSingleStockQuote} = useContext(StockContext)
     const [dates, setDates] = useState([]);
     const [prices, setPrices] = useState([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const [loading, setLoading] = useState(false)
     const theme = useTheme();
     const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
@@ -42,6 +45,17 @@ const FullscreenChart = ({data, ticker}) => {
             setPrices(prices => [...prices, element.close]);
         })
     }
+
+    useEffect(() => {
+        getSingleStockQuote(ticker)
+        if(dialogOpen){
+            getSingleStockQuote(ticker)
+            const interval = setInterval(() => {
+                getSingleStockQuote(ticker)
+            }, 60000)
+            return () => clearInterval(interval);
+        }
+    }, [dialogOpen])
 
     useEffect(() => {
         setDates([]);
@@ -81,36 +95,61 @@ const FullscreenChart = ({data, ticker}) => {
         
     }
 
+    const handleDialogClose = (event) => {
+        setDialogOpen(false)
+    }
+
     return (
-            <Box sx={{width:'100%', mt:3}}>
-                <Box display="flex">
-                    {!tickerList.includes(ticker) 
-                        ? <LoadingButton loading={loading} sx={{marginRight:'auto', marginLeft:3}} variant="outlined" onClick={handleAddClick} startIcon={<AddIcon/>}>Watchlist</LoadingButton>
-                        : <LoadingButton loading={loading} sx={{marginRight:'auto', marginLeft:3}} color="error" variant="outlined" onClick={handleRemoveClick} startIcon={<RemoveIcon/>}>Watchlist</LoadingButton>
-                    }
-                    <ButtonGroup variant="outlined" sx={{marginLeft:'auto', marginRight:3}}>
-                        {intervals.map((value, index) => (
-                            <Button key={value} variant={selectedInterval === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval(value)}>{value}</Button>    
-                        ))}
-                    </ButtonGroup>
-                </Box>
-                <Plot
-                    style={{width:'100%', height: '86.5vh'}} 
-                    data={[
-                        {
-                            x: dates,
-                            y: prices,
-                            type:'scatter',
-                            mode:'lines'
-                        }
-                    ]}
-                    layout={layout}
-                    useResizeHandler={true}
-                    config={{
-                        displayModeBar: false
-                    }}
-                />
+        <Box display="flex" flexDirection="column" flex={1} minHeight={0} width='100%'>
+            <Box display="flex" sx={{marginTop:'10px'}}>
+                {!tickerList.includes(ticker) 
+                    ? <LoadingButton loading={loading} sx={{marginLeft:3}} variant="outlined" onClick={handleAddClick} startIcon={<AddIcon/>}>Watchlist</LoadingButton>
+                    : <LoadingButton loading={loading} sx={{marginLeft:3}} color="error" variant="outlined" onClick={handleRemoveClick} startIcon={<RemoveIcon/>}>Watchlist</LoadingButton>
+                }
+                <LoadingButton variant='outlined' sx={{ml:2}} loading={dialogOpen} onClick={() => setDialogOpen(true)}>Buy/Sell</LoadingButton>
+                <ButtonGroup variant="outlined" sx={{marginLeft:'auto', marginRight:3}}>
+                    {intervals.map((value, index) => (
+                        <Button key={value} variant={selectedInterval === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval(value)}>{value}</Button>    
+                    ))}
+                </ButtonGroup>
             </Box>
+            <Plot
+                data={[
+                    {
+                        x: dates,
+                        y: prices,
+                        type:'scatter',
+                        mode:'lines'
+                    }
+                ]}
+                style={{height:'100%', minHeight:0}}
+                layout={layout}
+                useResizeHandler={true}
+                config={{
+                    displayModeBar: false
+                }}
+            />
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+            >
+                <DialogTitle>
+                    <Box display="flex" alignItems="center">
+                        <Box flexGrow={1}>{`Buy/Sell ${ticker}`}</Box>
+                        <Box>
+                            <IconButton onClick={() => setDialogOpen(false)}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                    </Box>    
+                </DialogTitle>
+                <DialogContent>
+                    <Box display="flex" flexDirection={"column"} marginTop="10px">
+                        <BuySellForm stock={ticker} value={singleStockQuote} callback={setDialogOpen}/>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+        </Box>
     );
 };
 

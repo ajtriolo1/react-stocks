@@ -49,7 +49,7 @@ const stockReducer = (state, action) => {
         case 'single_stock_quote':
             return {...state, singleStockQuote:action.payload}
         case 'reset_single':
-            return {...state, singleStock:null, singleStockQuote:null}
+            return {...state, singleStockHistorical:null, singleStockQuote:null}
         // case 'selected_interval':
         //     const selectedTicker = action.payload.ticker
         //     const newInterval = action.payload.interval

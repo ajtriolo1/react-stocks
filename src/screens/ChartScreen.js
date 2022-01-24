@@ -19,12 +19,12 @@ const ChartScreen = () => {
     }
 
     return (
-        <>
+        <Box display="flex" minHeight="100vh" flexDirection={'column'}>
             <NavBar/>
             <AddStock />
             {chartList.length === 0 
-                ? <Box display="flex" alignItem='center' justifyContent="center">
-                    <CircularProgress />
+                ? <Box display="flex" sx={{m:'auto'}}>
+                    <CircularProgress sx={{alignSelf:'center'}} />
                 </Box>
                 :
                 <Grid container spacing={2}>
@@ -38,7 +38,7 @@ const ChartScreen = () => {
                     ))}
                 </Grid>
             }
-        </>
+        </Box>
     );
 }
 

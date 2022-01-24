@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, Button, IconButton, CircularProgress } from '@mui/material';
+import { Box, Grid, Typography, IconButton, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
@@ -7,7 +7,6 @@ import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import React, { useContext, useEffect, useState } from 'react';
 import {Context as StockContext} from '../context/StockContext';
 import NavBar from '../components/NavBar';
-import { useTheme } from '@mui/material/styles';
 import AddStock from '../components/AddStock';
 import BuySellForm from '../components/BuySellForm';
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
@@ -51,7 +50,6 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 const ListScreen = () => {
     const {state:{stocksList, chartList}, fetchList, fetchStocks, deleteStock} = useContext(StockContext);
     const [expanded, setExpanded] = useState('');
-    const theme = useTheme();
 
     useEffect(() => {
         if (chartList.length === 0){
@@ -75,12 +73,12 @@ const ListScreen = () => {
     }
 
     return (
-        <>
+        <Box display="flex" minHeight="100vh" flexDirection="column">
             <NavBar />
             <AddStock />
             {Object.entries(stocksList).length === 0 
-                ? <Box display="flex" justifyContent="center">
-                    <CircularProgress />
+                ? <Box display="flex" margin="auto">
+                    <CircularProgress sx={{alignSelf:'center'}}/>
                 </Box>
                 : <Box>
                     {Object.entries(stocksList).map(([key, value]) => (
@@ -111,7 +109,7 @@ const ListScreen = () => {
                     ))}
                 </Box>
             }
-        </>
+        </Box>
     )
 }
 

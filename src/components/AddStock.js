@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react';
-import { Grid, TextField, Button } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 import {LoadingButton} from '@mui/lab'
 import { Context as StockContext } from '../context/StockContext';
 
@@ -26,7 +26,7 @@ const AddStock = () => {
 
     const handleScroll = () => {
         window.scroll({
-            top: document.body.offsetHeight,
+            top: document.body.scrollHeight,
             left: 0, 
             behavior: 'smooth',
         });

@@ -1,13 +1,11 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState} from "react";
 import Plot from "react-plotly.js";
 import { useTheme } from '@mui/material/styles';
 import { ButtonGroup, Button } from "@mui/material";
-import {Context as StockContext} from '../context/StockContext';
 import moment from 'moment';
 
 
 const StockChart = ({ data, ticker }) => {
-    //const {state:{selectedIntervals}, setSelectedInterval} = useContext(StockContext)
     const [selectedInterval, setSelectedInterval] = useState('1d')
     const theme = useTheme();
     const [dates, setDates] = useState([]);
@@ -28,7 +26,6 @@ const StockChart = ({ data, ticker }) => {
     });
 
     const getData = async () => {
-        //const data_interval = data[selectedIntervals[ticker]]['quotes']
         const data_interval = data[selectedInterval]['quotes']
         data_interval.forEach(element => {
             if (selectedInterval !== '1d' && selectedInterval !== '1wk'){
@@ -45,7 +42,6 @@ const StockChart = ({ data, ticker }) => {
         setPrices([]);
         getData();
     }, [selectedInterval])
-    // }, [selectedIntervals[ticker]]);
 
     useEffect(() => {
         setLayout({
@@ -68,7 +64,6 @@ const StockChart = ({ data, ticker }) => {
         <>
             <ButtonGroup sx={{paddingRight:10, alignSelf:'flex-end'}} variant="outlined">
                 {intervals.map((value, index) => (
-                    // <Button key={value} variant={selectedIntervals[ticker] === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval({ticker, interval:value})}>{value}</Button>    
                     <Button key={value} variant={selectedInterval === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval(value)}>{value}</Button>    
                 ))}
             </ButtonGroup>

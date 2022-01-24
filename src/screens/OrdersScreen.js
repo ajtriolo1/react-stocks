@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import NavBar from '../components/NavBar';
 import {Context as OrderContext} from '../context/OrderContext'
 import { DataGrid, GridOverlay, GridFooterContainer, GridFooter } from '@mui/x-data-grid';
-import { IconButton, LinearProgress, Tooltip } from '@mui/material';
+import { IconButton, LinearProgress, Tooltip, Box } from '@mui/material';
 import moment from 'moment'
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -80,25 +80,26 @@ const OrdersScreen = () => {
     return (
         <>
             <NavBar />
-            <DataGrid 
-                autoHeight
-                sx={{margingBottom:11}}
-                disableSelectionOnClick
-                columns={columns}
-                rows={orderList}
-                loading={loading}
-                sortModel={sortModel}
-                rowsPerPageOptions={pageOptions}
-                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                pageSize={pageSize}
-                onSortModelChange={(model) => setSortModel(model)}
-                getRowId={(row) => row._id}
-                components={{
-                    Footer: (props) => <CustomFooter callback={handleRefresh} {...props}/>,
-                    LoadingOverlay: CustomLoadingOverlay
-                }}
-                
-            />
+            <Box sx={{paddingBottom:11}}>
+                <DataGrid 
+                    autoHeight
+                    disableSelectionOnClick
+                    columns={columns}
+                    rows={orderList}
+                    loading={loading}
+                    sortModel={sortModel}
+                    rowsPerPageOptions={pageOptions}
+                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                    pageSize={pageSize}
+                    onSortModelChange={(model) => setSortModel(model)}
+                    getRowId={(row) => row._id}
+                    components={{
+                        Footer: (props) => <CustomFooter callback={handleRefresh} {...props}/>,
+                        LoadingOverlay: CustomLoadingOverlay
+                    }}
+                    
+                />
+            </Box>
         </>
     );
 };

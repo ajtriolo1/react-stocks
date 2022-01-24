@@ -109,7 +109,7 @@ const PortfolioScreen = () => {
     return (
         <>
             <NavBar />
-            <DataGrid
+            <Box 
                 sx={{
                     '& .negative':{
                         color: 'red'
@@ -120,43 +120,46 @@ const PortfolioScreen = () => {
                     '& .zero':{
                         color:'gray'
                     },
-                    margingBottom:11
-                }} 
-                autoHeight
-                columns={columns}
-                rows={data}
-                components={{
-                    Footer: (props) => <CustomFooter totalValue={totalValue} {...props}/>,
-                    NoRowsOverlay: CustomNoRowsOverlay
+                    paddingBottom:11
                 }}
-                disableSelectionOnClick
-                getRowId={(row) => row._id}
-                sortModel={sortModel}
-                onSortModelChange={(model) => setSortModel(model)}
-                rowsPerPageOptions={pageOptions}
-                onRowClick={handleRowClick}
-                onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-                pageSize={pageSize}
-                getCellClassName={(params) => {
-                    if(params.field !== 'gains'){
-                        return ''
-                    }
-                    if(params.value > 0){
-                        return 'positive'
-                    }else if (params.value < 0){
-                        return 'negative'
-                    }else{
-                        return 'gray'
-                    }
-                }}
-            />
+            >
+                <DataGrid
+                    autoHeight
+                    columns={columns}
+                    rows={data}
+                    components={{
+                        Footer: (props) => <CustomFooter totalValue={totalValue} {...props}/>,
+                        NoRowsOverlay: CustomNoRowsOverlay
+                    }}
+                    disableSelectionOnClick
+                    getRowId={(row) => row._id}
+                    sortModel={sortModel}
+                    onSortModelChange={(model) => setSortModel(model)}
+                    rowsPerPageOptions={pageOptions}
+                    onRowClick={handleRowClick}
+                    onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                    pageSize={pageSize}
+                    getCellClassName={(params) => {
+                        if(params.field !== 'gains'){
+                            return ''
+                        }
+                        if(params.value > 0){
+                            return 'positive'
+                        }else if (params.value < 0){
+                            return 'negative'
+                        }else{
+                            return 'gray'
+                        }
+                    }}
+                />
+            </Box>
             <Dialog
                 open={dialogOpen}
                 onClose={handleDialogClose}
             >
                 <DialogTitle>
                     <Box display="flex" alignItems="center">
-                        <Box flexGrow={1}>{`Buy More ${stockOpen}`}</Box>
+                        <Box flexGrow={1}>{`Buy/Sell ${stockOpen}`}</Box>
                         <Box>
                             <IconButton onClick={() => setDialogOpen(false)}>
                                 <CloseIcon />
