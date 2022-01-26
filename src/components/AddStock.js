@@ -16,12 +16,16 @@ const AddStock = () => {
     event.preventDefault();
     setTerm('');
     if (tickerList.includes(term)) {
-      alert('This stock is already in your portfolio');
+      alert('This stock is already in your watchlist');
     } else if (term === '') {
       alert('Please enter a stock ticker symbol');
     } else {
       setLoadingCharts(true);
-      await addStock(term);
+      const err = await addStock(term);
+      if (err) {
+        setLoadingCharts(false);
+        return alert(err);
+      }
       await fetchList();
       handleScroll();
       setLoadingCharts(false);

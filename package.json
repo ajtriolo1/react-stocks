@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "eslint-plugin-react": "^7.28.0"
+    "eslint-plugin-react": "^7.28.0",
+	"react-error-overlay": "6.0.9"
   }
 }

@@ -219,10 +219,18 @@ const BuySellForm = ({ stock, value, callback }) => {
               ''
             )}
           </Box>
-          <Button type='submit' name='buy'>
+          <Button
+            type='submit'
+            name='buy'
+            sx={{ alignSelf: 'center', width: '50%' }}
+          >
             Buy
           </Button>
-          <Button type='submit' name='sell'>
+          <Button
+            type='submit'
+            name='sell'
+            sx={{ alignSelf: 'center', width: '50%' }}
+          >
             Sell
           </Button>
         </Box>

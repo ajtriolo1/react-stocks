@@ -2,7 +2,7 @@ require('./models/User');
 require('./models/Stock');
 require('./models/Transaction');
 require('./models/Portfolio');
-require('./models/Order')
+require('./models/Order');
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
@@ -11,27 +11,29 @@ const authRoutes = require('./routes/authRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
-const orderRoutes = require('./routes/orderRoutes')
+const orderRoutes = require('./routes/orderRoutes');
 const requireAuth = require('./middlewares/requireAuth');
-
 
 const app = express();
 
-app.use(cors({
-  origin: '*'
-}));
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 
 app.use(bodyParser.json());
-app.use(authRoutes)
+app.use(authRoutes);
 app.use(transactionRoutes);
 app.use(portfolioRoutes);
 app.use(stockRoutes);
 app.use(orderRoutes);
 app.disable('etag');
 
-const mongoUri = 'mongodb+srv://admin:passwordpassword@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority';
+const mongoUri =
+  'mongodb+srv://admin:passwordpassword@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority';
 mongoose.connect(mongoUri, {
-  useNewUrlParser: true
+  useNewUrlParser: true,
 });
 
 mongoose.connection.on('connected', () => {
@@ -60,10 +62,10 @@ mongoose.connection.on('error', (err) => {
 //   );
 // });
 
-app.get('/', requireAuth, (req,res) => {
+app.get('/', requireAuth, (req, res) => {
   res.send(`Your email: ${req.user.email}`);
-})
+});
 
 app.listen(8080, () => {
-    console.log('Listening on port 8080');
+  console.log('Listening on port 8080');
 });

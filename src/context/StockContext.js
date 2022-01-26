@@ -87,8 +87,12 @@ const fetchStocks = (dispatch) => async () => {
 };
 
 const addStock = (dispatch) => async (ticker) => {
-  const res = await stocksApi.post('/stocks', { ticker });
-  dispatch({ type: 'add_stock', payload: res.data });
+  try {
+    const res = await stocksApi.post('/stocks', { ticker });
+    dispatch({ type: 'add_stock', payload: res.data });
+  } catch (err) {
+    return err.response.data.message;
+  }
 };
 
 const deleteStock = (dispatch) => async (ticker) => {

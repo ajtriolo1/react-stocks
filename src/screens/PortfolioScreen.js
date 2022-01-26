@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { Context as PortfolioContext } from '../context/PortfolioContext';
 import {
@@ -137,6 +137,7 @@ const PortfolioScreen = () => {
       sort: 'asc',
     },
   ]);
+  const test = useRef({});
 
   useEffect(() => {
     getPortfolio();
@@ -181,6 +182,11 @@ const PortfolioScreen = () => {
     setOpenStockValue({});
   };
 
+  const currentlySelected = (selections) => {
+    console.log(selections);
+    test.current = selections;
+  };
+
   return (
     <>
       <NavBar />
@@ -208,6 +214,11 @@ const PortfolioScreen = () => {
             ),
             NoRowsOverlay: CustomNoRowsOverlay,
           }}
+          sx={{
+            '& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus': {
+              outline: 'none',
+            },
+          }}
           disableSelectionOnClick
           getRowId={(row) => row._id}
           sortModel={sortModel}
@@ -216,6 +227,7 @@ const PortfolioScreen = () => {
           onRowClick={handleRowClick}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           pageSize={pageSize}
+          onCellClick={(item) => console.log(item)}
           getCellClassName={(params) => {
             if (params.field !== 'gains') {
               return '';
