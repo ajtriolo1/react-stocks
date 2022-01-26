@@ -1,16 +1,16 @@
 import { useContext, useEffect } from 'react';
-import {Context as AuthContext} from '../context/AuthContext';
+import { Context as AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const ResolveAuth = () => {
-    const {tryLocalSignin} = useContext(AuthContext);
-    const navigate = useNavigate();
+  const { tryLocalSignin } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        tryLocalSignin(navigate);
-    }, []);
+  useEffect(() => {
+    tryLocalSignin(navigate);
+  }, []);
 
-    return null;
-}
+  return null;
+};
 
 export default ResolveAuth;

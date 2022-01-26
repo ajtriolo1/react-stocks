@@ -1,91 +1,97 @@
-import React, {useEffect, useState} from "react";
-import Plot from "react-plotly.js";
+import React, { useEffect, useState } from 'react';
+import Plot from 'react-plotly.js';
 import { useTheme } from '@mui/material/styles';
-import { ButtonGroup, Button } from "@mui/material";
+import { ButtonGroup, Button } from '@mui/material';
 import moment from 'moment';
 
-
 const StockChart = ({ data, ticker }) => {
-    const [selectedInterval, setSelectedInterval] = useState('1d')
-    const theme = useTheme();
-    const [dates, setDates] = useState([]);
-    const [prices, setPrices] = useState([]);
-    const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
-    const [layout, setLayout] = useState({
-        title:{
-            text: ticker,
-            font:{
-                color:theme.palette.text.primary
-            } 
-        },
-        plot_bgcolor: theme.palette.background.default, 
-        paper_bgcolor: theme.palette.background.paper, 
-        xaxis:{color:theme.palette.text.primary},
-        yaxis:{color:theme.palette.text.primary},
-        autosize: true
+  const [selectedInterval, setSelectedInterval] = useState('1d');
+  const theme = useTheme();
+  const [dates, setDates] = useState([]);
+  const [prices, setPrices] = useState([]);
+  const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
+  const [layout, setLayout] = useState({
+    title: {
+      text: ticker,
+      font: {
+        color: theme.palette.text.primary,
+      },
+    },
+    plot_bgcolor: theme.palette.background.default,
+    paper_bgcolor: theme.palette.background.paper,
+    xaxis: { color: theme.palette.text.primary },
+    yaxis: { color: theme.palette.text.primary },
+    autosize: true,
+  });
+
+  const getData = async () => {
+    const data_interval = data[selectedInterval]['quotes'];
+    data_interval.forEach((element) => {
+      if (selectedInterval !== '1d' && selectedInterval !== '1wk') {
+        setDates((dates) => [...dates, element.date.split('T')[0]]);
+      } else {
+        setDates((dates) => [...dates, moment(element.date).format()]);
+      }
+      setPrices((prices) => [...prices, element.close]);
     });
+  };
 
-    const getData = async () => {
-        const data_interval = data[selectedInterval]['quotes']
-        data_interval.forEach(element => {
-            if (selectedInterval !== '1d' && selectedInterval !== '1wk'){
-                setDates(dates => [...dates, element.date.split('T')[0]])
-            }else{
-                setDates(dates => [...dates, moment(element.date).format()]);
-            }
-            setPrices(prices => [...prices, element.close]);
-        })
-    }
+  useEffect(() => {
+    setDates([]);
+    setPrices([]);
+    getData();
+  }, [selectedInterval]);
 
-    useEffect(() => {
-        setDates([]);
-        setPrices([]);
-        getData();
-    }, [selectedInterval])
+  useEffect(() => {
+    setLayout({
+      title: {
+        text: ticker,
+        font: {
+          color: theme.palette.text.primary,
+        },
+      },
+      plot_bgcolor: theme.palette.background.default,
+      paper_bgcolor: theme.palette.background.paper,
+      xaxis: { color: theme.palette.text.primary },
+      yaxis: { color: theme.palette.text.primary },
+      autosize: true,
+    });
+  }, [theme]);
 
-    useEffect(() => {
-        setLayout({
-            title:{
-                text: ticker,
-                font:{
-                    color:theme.palette.text.primary
-                } 
-            },
-            plot_bgcolor: theme.palette.background.default, 
-            paper_bgcolor: theme.palette.background.paper, 
-            xaxis:{color:theme.palette.text.primary},
-            yaxis:{color:theme.palette.text.primary},
-            autosize: true
-        })
-    }, [theme])
+  return (
+    <>
+      <ButtonGroup
+        sx={{ paddingRight: 10, alignSelf: 'flex-end' }}
+        variant='outlined'
+      >
+        {intervals.map((value, index) => (
+          <Button
+            key={value}
+            variant={selectedInterval === value ? 'contained' : 'outlined'}
+            onClick={() => setSelectedInterval(value)}
+          >
+            {value}
+          </Button>
+        ))}
+      </ButtonGroup>
+      <Plot
+        data={[
+          {
+            x: dates,
+            y: prices,
+            type: 'scatter',
+            mode: 'lines',
+          },
+        ]}
+        style={{ width: '100%' }}
+        useResizeHandler={true}
+        layout={layout}
+        config={{
+          displayModeBar: false,
+        }}
+      />
+    </>
+  );
+};
 
-
-    return (
-        <>
-            <ButtonGroup sx={{paddingRight:10, alignSelf:'flex-end'}} variant="outlined">
-                {intervals.map((value, index) => (
-                    <Button key={value} variant={selectedInterval === value ? "contained" : 'outlined'} onClick={() => setSelectedInterval(value)}>{value}</Button>    
-                ))}
-            </ButtonGroup>
-            <Plot
-                data={[
-                    {
-                        x: dates,
-                        y: prices,
-                        type: 'scatter',
-                        mode:'lines'
-                    }
-                ]}
-                style={{width:'100%'}}
-                useResizeHandler={true}
-                layout={layout}
-                config={{
-                    displayModeBar: false
-                }}
-            />
-        </>
-        
-    )
-}
-
-export default StockChart
+export default StockChart;
