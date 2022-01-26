@@ -256,8 +256,14 @@ router.get('/historical/:ticker', async (req, res) => {
           { validateResult: false }
         ),
       };
+      if (results[ticker]['1d']['quotes'].length === 0) {
+        throw `${ticker} does not exist or has no data`;
+      }
       break;
     } catch (err) {
+      if (err.includes('does not exist')) {
+        return res.status(404).send({ message: err });
+      }
       setTimeout(() => {
         console.log('error');
       }, 1000);

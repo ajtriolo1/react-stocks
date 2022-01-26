@@ -4,8 +4,10 @@ import { useParams } from 'react-router';
 import { Box, CircularProgress } from '@mui/material';
 import { Context as StockContext } from '../context/StockContext';
 import FullscreenChart from '../components/FullscreenChart';
+import { useNavigate } from 'react-router';
 
 const SingleStock = () => {
+  const navigate = useNavigate();
   const params = useParams();
   const {
     state: { singleStockHistorical },
@@ -14,10 +16,14 @@ const SingleStock = () => {
     fetchList,
   } = useContext(StockContext);
 
-  useEffect(() => {
+  useEffect(async () => {
     resetSingleStock();
+    const err = await getSingleStockHistorical(params.ticker);
+    if (err) {
+      alert(err);
+      return navigate(-1);
+    }
     fetchList();
-    getSingleStockHistorical(params.ticker);
   }, [params.ticker]);
 
   return (

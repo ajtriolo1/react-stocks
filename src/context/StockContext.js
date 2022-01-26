@@ -110,13 +110,21 @@ const fetchList = (dispatch) => async () => {
 };
 
 const getSingleStockHistorical = (dispatch) => async (ticker) => {
-  const res = await stocksApi.get(`/historical/${ticker}`);
-  dispatch({ type: 'single_stock_hist', payload: res.data[ticker] });
+  try {
+    const res = await stocksApi.get(`/historical/${ticker}`);
+    dispatch({ type: 'single_stock_hist', payload: res.data[ticker] });
+  } catch (err) {
+    return err.response.data.message;
+  }
 };
 
 const getSingleStockQuote = (dispatch) => async (ticker) => {
-  const res = await stocksApi.get(`/quote/${ticker}`);
-  dispatch({ type: 'single_stock_quote', payload: res.data });
+  try {
+    const res = await stocksApi.get(`/quote/${ticker}`);
+    dispatch({ type: 'single_stock_quote', payload: res.data });
+  } catch (err) {
+    return err.response.data.message;
+  }
 };
 
 const resetSingleStock = (dispatch) => () => {
