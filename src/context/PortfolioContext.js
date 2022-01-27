@@ -57,9 +57,10 @@ const getPortfolioQuotes = (dispatch) => async () => {
 const buyStock = (dispatch) => async (ticker, price, quantity) => {
   try {
     const res = await stocksApi.post('/buy', { ticker, price, quantity });
+    return Promise.resolve();
   } catch (err) {
     if (err.response.data.message.includes('Please provide')) {
-      return 'Please provide a valid number of shares';
+      return Promise.reject('Please provide a valid number of shares');
     } else {
       return err.response.data.message;
     }
@@ -69,11 +70,12 @@ const buyStock = (dispatch) => async (ticker, price, quantity) => {
 const sellStock = (dispatch) => async (ticker, price, quantity) => {
   try {
     const res = await stocksApi.post('/sell', { ticker, price, quantity });
+    return Promise.resolve();
   } catch (err) {
     if (err.response.data.message.includes('Please provide')) {
-      return 'Please provide a valid number of shares';
+      return Promise.reject('Please provide a valid number of shares');
     } else {
-      return err.response.data.message;
+      return Promise.reject(err.response.data.message);
     }
   }
 };

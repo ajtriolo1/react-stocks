@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { Context as PortfolioContext } from '../context/PortfolioContext';
 import { Context as OrderContext } from '../context/OrderContext';
+import { toast } from 'react-toastify';
 
 const BuySellForm = ({ stock, value, callback }) => {
   const [inputVal, setInputVal] = useState({});
@@ -41,44 +42,60 @@ const BuySellForm = ({ stock, value, callback }) => {
     event.preventDefault();
     const name = event.nativeEvent.submitter.name;
     const data = new FormData(event.currentTarget);
+    var res = undefined;
     if (orderType === 'Market') {
       if (name === 'buy') {
         if (balance < price * parseInt(data.get('quantity'))) {
           return setAlertOpen(true);
         }
-        const err = await buyStock(
-          ticker,
-          price,
-          parseInt(data.get('quantity'))
+        res = await toast.promise(
+          buyStock(ticker, price, parseInt(data.get('quantity'))),
+          {
+            success: `Successfully bought ${data.get('quantity')} ${ticker}`,
+            error: {
+              render({ data }) {
+                return data;
+              },
+            },
+          }
         );
-        if (err) {
-          return alert(err);
-        }
       } else {
-        const err = await sellStock(
-          ticker,
-          price,
-          parseInt(data.get('quantity'))
+        res = await toast.promise(
+          sellStock(ticker, price, parseInt(data.get('quantity'))),
+          {
+            success: `Successfully sold ${data.get('quantity')} ${ticker}`,
+            error: {
+              render({ data }) {
+                return data;
+              },
+            },
+          }
         );
-        if (err) {
-          setInputVal({ ...inputVal, [ticker]: '' });
-          return alert(err);
-        }
       }
     } else {
-      const err = await addOrder(
-        ticker,
-        orderPrice,
-        parseInt(data.get('quantity')),
-        orderType,
-        name
+      res = await toast.promise(
+        addOrder(
+          ticker,
+          orderPrice,
+          parseInt(data.get('quantity')),
+          orderType,
+          name
+        ),
+        {
+          success: `Successfully placed ${orderType.toLowerCase()} order for ${ticker}`,
+          error: {
+            render({ data }) {
+              setInputVal({ ...inputVal, [ticker]: '' });
+              setOrderType('Market');
+              setOrderPrice('');
+              return data;
+            },
+          },
+        }
       );
-      if (err) {
-        setInputVal({ ...inputVal, [ticker]: '' });
-        setOrderType('Market');
-        setOrderPrice('');
-        return alert(err);
-      }
+    }
+    if (res) {
+      return;
     }
     setInputVal({ ...inputVal, [ticker]: '' });
     setOrderType('Market');
@@ -93,9 +110,20 @@ const BuySellForm = ({ stock, value, callback }) => {
   const onConfirm = async (price, quantity, ticker) => {
     const required = price * quantity - balance;
     await deposit(required);
-    const err = await buyStock(ticker, price, parseInt(quantity));
-    if (err) {
-      return alert(err);
+    const res = await toast.promise(
+      buyStock(ticker, price, parseInt(data.get('quantity'))),
+      {
+        success: `Successfully bought ${data.get('quantity')} ${ticker}`,
+        error: {
+          render({ data }) {
+            return data;
+          },
+          style: { width: '360px' },
+        },
+      }
+    );
+    if (res) {
+      return;
     }
     setOrderType('Market');
     setInputVal({ ...inputVal, [ticker]: '' });

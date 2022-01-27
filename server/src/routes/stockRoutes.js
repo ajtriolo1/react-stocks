@@ -201,8 +201,12 @@ router.post('/stocks', async (req, res) => {
     await stock.save();
     res.send(results);
   } catch (err) {
-    console.log(err);
-    return res.status(404).send({ message: err });
+    if (err instanceof String) {
+      return res.status(404).send({ message: err });
+    }
+    return res
+      .status(404)
+      .send({ message: `${ticker} does not exist or has no data` });
   }
 });
 
@@ -261,8 +265,12 @@ router.get('/historical/:ticker', async (req, res) => {
       }
       break;
     } catch (err) {
-      if (err.includes('does not exist')) {
+      if (err instanceof String) {
         return res.status(404).send({ message: err });
+      } else {
+        return res
+          .status(404)
+          .send({ message: `${ticker} does not exist or has no data` });
       }
       setTimeout(() => {
         console.log('error');
@@ -316,6 +324,22 @@ router.put('/email', async (req, res) => {
   } catch (err) {
     res.status(422).send({ message: 'Duplicate Email' });
   }
+});
+
+router.post('/autocomplete', async (req, res) => {
+  const { value } = req.body;
+
+  if (!value) {
+    return res.send([]);
+  }
+
+  const results = await yahooFinance2.search(value);
+
+  var response = results['quotes'].filter((el) => {
+    return el.isYahooFinance === true;
+  });
+
+  res.send(response);
 });
 
 module.exports = router;

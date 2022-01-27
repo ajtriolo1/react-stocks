@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Grid, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Context as StockContext } from '../context/StockContext';
+import { toast } from 'react-toastify';
 
 const AddStock = () => {
   const [term, setTerm] = useState('');
@@ -16,15 +17,21 @@ const AddStock = () => {
     event.preventDefault();
     setTerm('');
     if (tickerList.includes(term)) {
-      alert('This stock is already in your watchlist');
+      toast.error('This stock is already in your watchlist');
     } else if (term === '') {
-      alert('Please enter a stock ticker symbol');
+      toast.error('Please enter a stock ticker symbol');
     } else {
       setLoadingCharts(true);
-      const err = await addStock(term);
-      if (err) {
-        setLoadingCharts(false);
-        return alert(err);
+      const res = await toast.promise(addStock(term), {
+        error: {
+          render({ data }) {
+            setLoadingCharts(false);
+            return data;
+          },
+        },
+      });
+      if (res) {
+        return;
       }
       await fetchList();
       handleScroll();

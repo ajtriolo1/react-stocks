@@ -38,8 +38,9 @@ const addOrder =
         buy_sell,
       });
       dispatch({ type: 'add_order', payload: res.data });
+      return Promise.resolve();
     } catch (err) {
-      return err.response.data.message;
+      return Promise.reject(err.response.data.message);
     }
   };
 

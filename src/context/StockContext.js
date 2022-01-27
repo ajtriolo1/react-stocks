@@ -72,10 +72,6 @@ const stockReducer = (state, action) => {
         singleStockHistorical: null,
         singleStockQuote: null,
       };
-    // case 'selected_interval':
-    //     const selectedTicker = action.payload.ticker
-    //     const newInterval = action.payload.interval
-    //     return {...state, selectedIntervals:{...state.selectedIntervals, [selectedTicker]:newInterval}}
     default:
       return state;
   }
@@ -90,8 +86,9 @@ const addStock = (dispatch) => async (ticker) => {
   try {
     const res = await stocksApi.post('/stocks', { ticker });
     dispatch({ type: 'add_stock', payload: res.data });
+    return Promise.resolve();
   } catch (err) {
-    return err.response.data.message;
+    return Promise.reject(err.response.data.message);
   }
 };
 
@@ -113,8 +110,9 @@ const getSingleStockHistorical = (dispatch) => async (ticker) => {
   try {
     const res = await stocksApi.get(`/historical/${ticker}`);
     dispatch({ type: 'single_stock_hist', payload: res.data[ticker] });
+    return Promise.resolve();
   } catch (err) {
-    return err.response.data.message;
+    return Promise.reject(err.response.data.message);
   }
 };
 
@@ -130,11 +128,6 @@ const getSingleStockQuote = (dispatch) => async (ticker) => {
 const resetSingleStock = (dispatch) => () => {
   dispatch({ type: 'reset_single' });
 };
-
-// const setSelectedInterval = dispatch => ({ticker, interval}) => {
-
-//     dispatch({type: 'selected_interval', payload:{ticker, interval}})
-// }
 
 export const { Provider, Context } = createDataContext(
   stockReducer,

@@ -14,6 +14,8 @@ import {
   TextField,
   InputAdornment,
   DialogActions,
+  CircularProgress,
+  InputBase,
 } from '@mui/material';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as StockContext } from '../context/StockContext';
@@ -22,11 +24,45 @@ import { useNavigate } from 'react-router-dom';
 import { AccountCircle } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
+import { styled, alpha } from '@mui/material/styles';
+import { toast } from 'react-toastify';
+import { useTheme } from '@mui/styles';
+
+const Search = styled('div')(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  marginTop: 16,
+  marginBottom: 16,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: 10,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
 
 const NavBar = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { signout } = useContext(AuthContext);
-  const { resetStocks } = useContext(StockContext);
+  const { resetStocks, getSingleStockHistorical } = useContext(StockContext);
   const {
     state: { balance },
     fetchBalance,
@@ -37,6 +73,7 @@ const NavBar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState('');
   const [searchStock, setSearchStock] = useState('');
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     fetchBalance();
@@ -66,6 +103,25 @@ const NavBar = () => {
     await deposit(parseFloat(depositAmount));
     setDepositAmount('');
     setDialogOpen(false);
+  };
+
+  const handleSingleStockSubmit = async (event) => {
+    event.preventDefault();
+    setSearchStock('');
+    setSearching(true);
+    const res = await toast.promise(getSingleStockHistorical(searchStock), {
+      error: {
+        render({ data }) {
+          setSearching(false);
+          return data;
+        },
+      },
+    });
+    if (res) {
+      return;
+    }
+    setSearching(false);
+    navigate(`/stock/${searchStock}`);
   };
 
   return (
@@ -109,26 +165,25 @@ const NavBar = () => {
             }}
           >
             <Box
-              sx={{ mr: 6 }}
+              sx={{ mr: '48px' }}
               component='form'
-              onSubmit={(event) => {
-                event.preventDefault();
-                setSearchStock('');
-                navigate(`/stock/${searchStock}`);
-              }}
+              onSubmit={(event) => handleSingleStockSubmit(event)}
             >
-              <TextField
-                value={searchStock}
-                placeholder='Ticker...'
-                onChangeCapture={(event) => setSearchStock(event.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <Search>
+                <StyledInputBase
+                  value={searchStock}
+                  placeholder='Ticker...'
+                  onChange={(event) =>
+                    setSearchStock(event.target.value.toUpperCase())
+                  }
+                  startAdornment={<SearchIcon sx={{ ml: 2, mt: '2px' }} />}
+                  endAdornment={
+                    searching ? (
+                      <CircularProgress size={20} sx={{ marginRight: '5px' }} />
+                    ) : null
+                  }
+                />
+              </Search>
             </Box>
             <Link
               sx={{ mt: '1.5px', mr: '30px' }}

@@ -8,6 +8,7 @@
     "@mui/icons-material": "^5.2.4",
     "@mui/lab": "^5.0.0-alpha.63",
     "@mui/material": "^5.2.4",
+    "@mui/styles": "^5.3.0",
     "@mui/x-data-grid": "^5.2.1",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
@@ -25,6 +26,7 @@
     "react-router": "^6.2.0",
     "react-router-dom": "^6.2.0",
     "react-scripts": "4.0.3",
+    "react-toastify": "^8.1.0",
     "web-vitals": "^1.1.2",
     "yahoo-finance": "^0.3.7"
   },
@@ -54,6 +56,6 @@
   },
   "devDependencies": {
     "eslint-plugin-react": "^7.28.0",
-	"react-error-overlay": "6.0.9"
+    "react-error-overlay": "6.0.9"
   }
 }

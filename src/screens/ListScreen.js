@@ -16,6 +16,7 @@ import NavBar from '../components/NavBar';
 import AddStock from '../components/AddStock';
 import BuySellForm from '../components/BuySellForm';
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />

@@ -19,6 +19,8 @@ import PortfolioScreen from './screens/PortfolioScreen';
 import OrdersScreen from './screens/OrdersScreen';
 import SingleStock from './screens/SingleStock';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [dark, setDark] = useState(true);
@@ -27,9 +29,8 @@ function App() {
   const theme = createTheme({
     palette: {
       mode: dark ? 'dark' : 'light',
-      signout: {
-        main: '#fff',
-        contrastText: '#000',
+      search: {
+        main: '#424242',
       },
     },
   });
@@ -42,6 +43,14 @@ function App() {
             <Router>
               <ThemeProvider theme={theme}>
                 <CssBaseline />
+                <ToastContainer
+                  position='bottom-left'
+                  autoClose={3000}
+                  hideProgressBar={true}
+                  closeButton={false}
+                  theme={'colored'}
+                  style={{ display: 'flex', width: 'auto' }}
+                />
                 <Routes>
                   <Route path='/' element={<ResolveAuth />} />
                   <Route path='/charts' element={<ChartScreen />} />

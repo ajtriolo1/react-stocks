@@ -1,13 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { useParams } from 'react-router';
 import { Box, CircularProgress } from '@mui/material';
 import { Context as StockContext } from '../context/StockContext';
 import FullscreenChart from '../components/FullscreenChart';
-import { useNavigate } from 'react-router';
 
 const SingleStock = () => {
-  const navigate = useNavigate();
   const params = useParams();
   const {
     state: { singleStockHistorical },
@@ -15,21 +13,23 @@ const SingleStock = () => {
     resetSingleStock,
     fetchList,
   } = useContext(StockContext);
+  const [loading, setLoading] = useState(false);
 
   useEffect(async () => {
-    resetSingleStock();
-    const err = await getSingleStockHistorical(params.ticker);
-    if (err) {
-      alert(err);
-      return navigate(-1);
+    setLoading(true);
+    if (!singleStockHistorical) {
+      getSingleStockHistorical(params.ticker);
     }
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
     fetchList();
   }, [params.ticker]);
 
   return (
     <Box display='flex' flexDirection='column' height='100%'>
       <NavBar id='single-stock-navbar' />
-      {singleStockHistorical ? (
+      {singleStockHistorical && !loading ? (
         <Box display='flex' flexDirection='column' flex={1} minHeight={0}>
           <FullscreenChart
             data={singleStockHistorical}
