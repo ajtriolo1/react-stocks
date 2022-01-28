@@ -16,6 +16,7 @@ import {
   DialogActions,
   CircularProgress,
   InputBase,
+  Autocomplete,
 } from '@mui/material';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as StockContext } from '../context/StockContext';
@@ -62,7 +63,13 @@ const NavBar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { signout } = useContext(AuthContext);
-  const { resetStocks, getSingleStockHistorical } = useContext(StockContext);
+  const {
+    state: { options },
+    autoComplete,
+    clearOptions,
+    resetStocks,
+    getSingleStockHistorical,
+  } = useContext(StockContext);
   const {
     state: { balance },
     fetchBalance,
@@ -74,6 +81,8 @@ const NavBar = () => {
   const [depositAmount, setDepositAmount] = useState('');
   const [searchStock, setSearchStock] = useState('');
   const [searching, setSearching] = useState(false);
+  const [open, setOpen] = useState(false);
+  const loading = open && options.length === 0;
 
   useEffect(() => {
     fetchBalance();
@@ -108,20 +117,30 @@ const NavBar = () => {
   const handleSingleStockSubmit = async (event) => {
     event.preventDefault();
     setSearchStock('');
+    setOpen(false);
+    clearOptions();
     setSearching(true);
-    const res = await toast.promise(getSingleStockHistorical(searchStock), {
-      error: {
-        render({ data }) {
-          setSearching(false);
-          return data;
+    if (searchStock.trim().length === 0) {
+      setSearching(false);
+      toast.error('Please provide a ticker');
+      return;
+    }
+    const res = await toast.promise(
+      getSingleStockHistorical(searchStock.trim().toUpperCase()),
+      {
+        error: {
+          render({ data }) {
+            setSearching(false);
+            return data;
+          },
         },
-      },
-    });
+      }
+    );
     if (res) {
       return;
     }
     setSearching(false);
-    navigate(`/stock/${searchStock}`);
+    navigate(`/stock/${searchStock.trim().toUpperCase()}`);
   };
 
   return (
@@ -170,6 +189,77 @@ const NavBar = () => {
               onSubmit={(event) => handleSingleStockSubmit(event)}
             >
               <Search>
+                <Autocomplete
+                  id='single-stock-search'
+                  style={{ width: '260px' }}
+                  freeSolo
+                  disableClearable
+                  open={open}
+                  onOpen={() => {
+                    setOpen(true);
+                  }}
+                  onClose={() => {
+                    setOpen(false);
+                  }}
+                  options={options}
+                  loading={loading}
+                  filterOptions={(x) => x}
+                  getOptionLabel={(option) => {
+                    if (option.symbol) {
+                      return option.symbol;
+                    } else {
+                      return option;
+                    }
+                  }}
+                  isOptionEqualToValue={(option, value) =>
+                    option.symbol === value.symbol
+                  }
+                  inputValue={searchStock}
+                  value={searchStock}
+                  onChange={(event, value, reason) => {
+                    if (reason === 'reset') {
+                      setSearchStock('');
+                      return;
+                    } else {
+                      if (value !== null) {
+                        setSearchStock(value.symbol);
+                      }
+                    }
+                  }}
+                  renderInput={(params) => {
+                    const { InputLabelProps, InputProps, ...rest } = params;
+                    return (
+                      <StyledInputBase
+                        {...params.InputProps}
+                        {...rest}
+                        value={searchStock}
+                        startAdornment={
+                          <SearchIcon sx={{ ml: 1.5, mt: '2px' }} />
+                        }
+                        endAdornment={
+                          searching ? (
+                            <CircularProgress
+                              size={20}
+                              sx={{ marginRight: '5px' }}
+                            />
+                          ) : null
+                        }
+                        onChange={(event) => {
+                          if (
+                            event.target.value !== '' ||
+                            event.target.value !== null
+                          ) {
+                            setSearchStock(event.target.value);
+                            autoComplete(event.target.value);
+                          }
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </Search>
+
+              {/* <Search>
                 <StyledInputBase
                   value={searchStock}
                   placeholder='Ticker...'
@@ -183,7 +273,7 @@ const NavBar = () => {
                     ) : null
                   }
                 />
-              </Search>
+              </Search> */}
             </Box>
             <Link
               sx={{ mt: '1.5px', mr: '30px' }}

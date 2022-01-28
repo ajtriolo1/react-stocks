@@ -61,6 +61,7 @@ const stockReducer = (state, action) => {
         chartList: [],
         tickerList: [],
         singleStockHistorical: null,
+        options: [],
       };
     case 'single_stock_hist':
       return { ...state, singleStockHistorical: action.payload };
@@ -72,6 +73,10 @@ const stockReducer = (state, action) => {
         singleStockHistorical: null,
         singleStockQuote: null,
       };
+    case 'get_autocomplete':
+      return { ...state, options: action.payload };
+    case 'reset_options':
+      return { ...state, options: [] };
     default:
       return state;
   }
@@ -129,6 +134,15 @@ const resetSingleStock = (dispatch) => () => {
   dispatch({ type: 'reset_single' });
 };
 
+const autoComplete = (dispatch) => async (value) => {
+  const res = await stocksApi.post('/autocomplete', { value });
+  dispatch({ type: 'get_autocomplete', payload: res.data });
+};
+
+const clearOptions = (dispatch) => () => {
+  dispatch({ type: 'reset_options' });
+};
+
 export const { Provider, Context } = createDataContext(
   stockReducer,
   {
@@ -140,6 +154,8 @@ export const { Provider, Context } = createDataContext(
     getSingleStockHistorical,
     getSingleStockQuote,
     resetSingleStock,
+    autoComplete,
+    clearOptions,
   },
   {
     chartList: [],
@@ -147,5 +163,6 @@ export const { Provider, Context } = createDataContext(
     stocksList: {},
     singleStockHistorical: null,
     singleStockQuote: null,
+    options: [],
   }
 );

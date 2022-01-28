@@ -211,7 +211,7 @@ router.post('/stocks', async (req, res) => {
 });
 
 router.get('/historical/:ticker', async (req, res) => {
-  const ticker = req.params.ticker;
+  const ticker = req.params.ticker.trim();
 
   var results = {};
 
@@ -327,7 +327,9 @@ router.put('/email', async (req, res) => {
 });
 
 router.post('/autocomplete', async (req, res) => {
-  const { value } = req.body;
+  var { value } = req.body;
+
+  value = value.trim();
 
   if (!value) {
     return res.send([]);
