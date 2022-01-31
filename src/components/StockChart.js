@@ -10,18 +10,33 @@ const StockChart = ({ data, ticker }) => {
   const [dates, setDates] = useState([]);
   const [prices, setPrices] = useState([]);
   const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
+  const shortname = data['shortname'];
   const [layout, setLayout] = useState({
     title: {
-      text: ticker,
+      text: shortname,
       font: {
         color: theme.palette.text.primary,
       },
     },
     plot_bgcolor: theme.palette.background.default,
     paper_bgcolor: theme.palette.background.paper,
-    xaxis: { color: theme.palette.text.primary },
+    xaxis: {
+      color: theme.palette.text.primary,
+      rangebreaks: [
+        {
+          enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+          bounds: ['sat', 'mon'],
+        },
+        {
+          enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+          pattern: 'hour',
+          bounds: [19, 3],
+        },
+      ],
+    },
     yaxis: { color: theme.palette.text.primary },
     autosize: true,
+    responsive: true,
   });
 
   const getData = async () => {
@@ -45,18 +60,32 @@ const StockChart = ({ data, ticker }) => {
   useEffect(() => {
     setLayout({
       title: {
-        text: ticker,
+        text: shortname,
         font: {
           color: theme.palette.text.primary,
         },
       },
       plot_bgcolor: theme.palette.background.default,
       paper_bgcolor: theme.palette.background.paper,
-      xaxis: { color: theme.palette.text.primary },
+      xaxis: {
+        color: theme.palette.text.primary,
+        rangebreaks: [
+          {
+            enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+            bounds: ['sat', 'mon'],
+          },
+          {
+            enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+            pattern: 'hour',
+            bounds: [19, 3],
+          },
+        ],
+      },
       yaxis: { color: theme.palette.text.primary },
       autosize: true,
+      responsive: true,
     });
-  }, [theme]);
+  }, [theme, selectedInterval]);
 
   return (
     <>

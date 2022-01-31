@@ -82,6 +82,7 @@ const NavBar = () => {
   const [searchStock, setSearchStock] = useState('');
   const [searching, setSearching] = useState(false);
   const [open, setOpen] = useState(false);
+  const [shortname, setShortname] = useState('');
   const loading = open && options.length === 0;
 
   useEffect(() => {
@@ -140,7 +141,9 @@ const NavBar = () => {
       return;
     }
     setSearching(false);
-    navigate(`/stock/${searchStock.trim().toUpperCase()}`);
+    navigate(`/stock/${searchStock.trim().toUpperCase()}`, {
+      state: { shortname },
+    });
   };
 
   return (
@@ -206,7 +209,7 @@ const NavBar = () => {
                   filterOptions={(x) => x}
                   getOptionLabel={(option) => {
                     if (option.symbol) {
-                      return option.symbol;
+                      return `${option.symbol} - ${option.shortname}`;
                     } else {
                       return option;
                     }
@@ -219,9 +222,11 @@ const NavBar = () => {
                   onChange={(event, value, reason) => {
                     if (reason === 'reset') {
                       setSearchStock('');
+                      setShortname('');
                       return;
                     } else {
                       if (value !== null) {
+                        setShortname(value.shortname);
                         setSearchStock(value.symbol);
                       }
                     }
@@ -233,6 +238,7 @@ const NavBar = () => {
                         {...params.InputProps}
                         {...rest}
                         value={searchStock}
+                        placeholder='Ticker...'
                         startAdornment={
                           <SearchIcon sx={{ ml: 1.5, mt: '2px' }} />
                         }

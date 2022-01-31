@@ -18,7 +18,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from './BuySellForm';
 
-const FullscreenChart = ({ data, ticker }) => {
+const FullscreenChart = ({ data, ticker, shortname }) => {
   const [selectedInterval, setSelectedInterval] = useState('1d');
   const {
     state: { tickerList, singleStockQuote },
@@ -34,14 +34,27 @@ const FullscreenChart = ({ data, ticker }) => {
   const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
   const [layout, setLayout] = useState({
     title: {
-      text: ticker,
+      text: shortname,
       font: {
         color: theme.palette.text.primary,
       },
     },
     plot_bgcolor: theme.palette.background.default,
     paper_bgcolor: theme.palette.background.paper,
-    xaxis: { color: theme.palette.text.primary },
+    xaxis: {
+      color: theme.palette.text.primary,
+      rangebreaks: [
+        {
+          enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+          bounds: ['sat', 'mon'],
+        },
+        {
+          enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+          pattern: 'hour',
+          bounds: [19, 3],
+        },
+      ],
+    },
     yaxis: { color: theme.palette.text.primary },
     autosize: true,
     responsive: true,
@@ -79,19 +92,32 @@ const FullscreenChart = ({ data, ticker }) => {
   useEffect(() => {
     setLayout({
       title: {
-        text: ticker,
+        text: shortname,
         font: {
           color: theme.palette.text.primary,
         },
       },
       plot_bgcolor: theme.palette.background.default,
       paper_bgcolor: theme.palette.background.paper,
-      xaxis: { color: theme.palette.text.primary },
+      xaxis: {
+        color: theme.palette.text.primary,
+        rangebreaks: [
+          {
+            enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+            bounds: ['sat', 'mon'],
+          },
+          {
+            enabled: !ticker.includes('-USD') && selectedInterval === '1wk',
+            pattern: 'hour',
+            bounds: [19, 3],
+          },
+        ],
+      },
       yaxis: { color: theme.palette.text.primary },
       autosize: true,
       responsive: true,
     });
-  }, [theme, ticker]);
+  }, [theme, ticker, selectedInterval]);
 
   const handleAddClick = async () => {
     setLoading(true);

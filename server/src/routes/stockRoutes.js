@@ -63,7 +63,11 @@ router.get('/stocks', async (req, res) => {
     try {
       await Promise.all(
         tickers.map(async (ticker) => {
+          const shortname = await yahooFinance2.quoteSummary(ticker, {
+            modules: ['quoteType'],
+          });
           results[ticker] = {
+            shortname: shortname['quoteType']['shortName'],
             '1d': await yahooFinance2._chart(
               ticker,
               {
