@@ -7,8 +7,6 @@ import FullscreenChart from '../components/FullscreenChart';
 
 const SingleStock = () => {
   const params = useParams();
-  const { state } = useLocation();
-  const { shortname } = state;
   const {
     state: { singleStockHistorical },
     getSingleStockHistorical,
@@ -36,7 +34,6 @@ const SingleStock = () => {
           <FullscreenChart
             data={singleStockHistorical}
             ticker={params.ticker}
-            shortname={shortname}
           />
         </Box>
       ) : (

@@ -156,7 +156,11 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
   try {
     const startDate = moment().subtract(6, 'months').format('YYYY-MM-DD');
     const endDate = moment().format('YYYY-MM-DD');
+    const shortname = await yahooFinance2.quoteSummary(ticker, {
+      modules: ['quoteType'],
+    });
     results[ticker] = {
+      shortname: shortname['quoteType']['shortName'],
       '1d': await yahooFinance2._chart(
         ticker,
         {
@@ -222,7 +226,11 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
 
   for (let i = 0; i < 100; i++) {
     try {
+      const shortname = await yahooFinance2.quoteSummary(ticker, {
+        modules: ['quoteType'],
+      });
       results[ticker] = {
+        shortname: shortname['quoteType']['shortName'],
         '1d': await yahooFinance2._chart(
           ticker,
           {

@@ -18,7 +18,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from './BuySellForm';
 
-const FullscreenChart = ({ data, ticker, shortname }) => {
+const FullscreenChart = ({ data, ticker }) => {
   const [selectedInterval, setSelectedInterval] = useState('1d');
   const {
     state: { tickerList, singleStockQuote },
@@ -26,6 +26,7 @@ const FullscreenChart = ({ data, ticker, shortname }) => {
     deleteStock,
     getSingleStockQuote,
   } = useContext(StockContext);
+  const shortname = data['shortname'];
   const [dates, setDates] = useState([]);
   const [prices, setPrices] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);

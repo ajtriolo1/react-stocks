@@ -7,7 +7,12 @@ import { Provider as PortfolioProvider } from './context/PortfolioContext';
 import { Provider as OrderProvider } from './context/OrderContext';
 import ResolveAuth from './components/ResolveAuth';
 import LoginScreen from './screens/LoginScreen';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import SignupScreen from './screens/SignupScreen';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -111,6 +116,7 @@ function App() {
                       </ResolveAuth>
                     }
                   />
+                  <Route path='*' element={<Navigate to='/' />} />
                 </Routes>
                 <Fab
                   sx={{

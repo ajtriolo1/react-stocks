@@ -82,7 +82,6 @@ const NavBar = () => {
   const [searchStock, setSearchStock] = useState('');
   const [searching, setSearching] = useState(false);
   const [open, setOpen] = useState(false);
-  const [shortname, setShortname] = useState('');
   const loading = open && options.length === 0;
 
   useEffect(() => {
@@ -115,19 +114,23 @@ const NavBar = () => {
     setDialogOpen(false);
   };
 
-  const handleSingleStockSubmit = async (event) => {
+  const handleSingleStockSubmit = async (event, stock = undefined) => {
     event.preventDefault();
+    var tick = searchStock;
+    if (stock) {
+      tick = stock;
+    }
     setSearchStock('');
     setOpen(false);
     clearOptions();
     setSearching(true);
-    if (searchStock.trim().length === 0) {
+    if (tick.trim().length === 0) {
       setSearching(false);
       toast.error('Please provide a ticker');
       return;
     }
     const res = await toast.promise(
-      getSingleStockHistorical(searchStock.trim().toUpperCase()),
+      getSingleStockHistorical(tick.trim().toUpperCase()),
       {
         error: {
           render({ data }) {
@@ -141,9 +144,7 @@ const NavBar = () => {
       return;
     }
     setSearching(false);
-    navigate(`/stock/${searchStock.trim().toUpperCase()}`, {
-      state: { shortname },
-    });
+    navigate(`/stock/${tick.trim().toUpperCase()}`);
   };
 
   return (
@@ -222,12 +223,11 @@ const NavBar = () => {
                   onChange={(event, value, reason) => {
                     if (reason === 'reset') {
                       setSearchStock('');
-                      setShortname('');
                       return;
                     } else {
                       if (value !== null) {
-                        setShortname(value.shortname);
                         setSearchStock(value.symbol);
+                        handleSingleStockSubmit(event, value.symbol);
                       }
                     }
                   }}

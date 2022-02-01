@@ -60,7 +60,7 @@ const AddStock = () => {
           size='small'
           variant='outlined'
           value={term}
-          onChange={(event) => setTerm(event.target.value)}
+          onChange={(event) => setTerm(event.target.value.trim().toUpperCase())}
         />
       </Grid>
       <Grid item alignItems='center' style={{ display: 'flex' }}>
