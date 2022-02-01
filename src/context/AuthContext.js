@@ -71,14 +71,36 @@ const signout = (dispatch) => async (navigate) => {
   navigate('/login', { replace: true });
 };
 
-const tryLocalSignin = (dispatch) => async (navigate) => {
+const tryLocalSignin = (dispatch) => async () => {
   const token = await localStorage.getItem('token');
   if (token) {
     dispatch({ type: 'signin', payload: token });
-    navigate('/charts');
   } else {
     dispatch({ type: 'signout' });
-    navigate('/login');
+  }
+};
+
+const checkToken = (dispatch) => async (navigate, children) => {
+  if (localStorage.getItem('token')) {
+    try {
+      await stocksApi.get('/user-info');
+    } catch (err) {
+      if (err.response.data.error === 'You must be logged in.') {
+        await localStorage.removeItem('token');
+        dispatch({ type: 'signout' });
+        navigate('/login', { replace: true });
+        return;
+      }
+    }
+    if (children) {
+      return children;
+    } else {
+      navigate('/charts');
+      return;
+    }
+  } else {
+    navigate('/login', { replace: true });
+    return;
   }
 };
 
@@ -101,7 +123,15 @@ const changeEmail =
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signup, signin, signout, tryLocalSignin, getUserInfo, changeEmail },
+  {
+    signup,
+    signin,
+    signout,
+    tryLocalSignin,
+    getUserInfo,
+    changeEmail,
+    checkToken,
+  },
   {
     token: null,
     errorMessage: { form: '' },

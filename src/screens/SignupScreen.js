@@ -45,7 +45,7 @@ export default function SignupScreen() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      navigate('/charts');
+      navigate('/charts', { replace: true });
     }
   }, []);
 
