@@ -4,6 +4,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const yahooFinance = require('yahoo-finance');
 const moment = require('moment');
 var bigdecimal = require('bigdecimal');
+const path = require('path');
 
 const Transaction = mongoose.model('Transaction');
 const Portfolio = mongoose.model('Portfolio');
@@ -11,9 +12,9 @@ const User = mongoose.model('User');
 
 const router = express.Router();
 
-router.use(requireAuth);
+//router.use(requireAuth);
 
-router.get('/transactions', async (req, res) => {
+router.get('/api/transactions', requireAuth, async (req, res) => {
   const transactions = await Transaction.find({ userId: req.user._id });
 
   if (transactions.length === 0) {
@@ -23,7 +24,7 @@ router.get('/transactions', async (req, res) => {
   res.send(transactions);
 });
 
-router.post('/sell', async (req, res) => {
+router.post('/api/sell', requireAuth, async (req, res) => {
   const { ticker, price, quantity } = req.body;
 
   if (!ticker || !price || !quantity) {
@@ -128,7 +129,7 @@ router.post('/sell', async (req, res) => {
   }
 });
 
-router.post('/buy', async (req, res) => {
+router.post('/api/buy', requireAuth, async (req, res) => {
   const { ticker, price, quantity } = req.body;
 
   if (!ticker || !price || !quantity) {

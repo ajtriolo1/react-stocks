@@ -53,18 +53,64 @@ function App() {
                 />
                 <Routes>
                   <Route path='/' element={<ResolveAuth />} />
-                  <Route path='/charts' element={<ChartScreen />} />
-                  <Route path='/list' element={<ListScreen />} />
+                  <Route
+                    path='/charts'
+                    element={
+                      <ResolveAuth>
+                        <ChartScreen />
+                      </ResolveAuth>
+                    }
+                  />
+                  <Route
+                    path='/list'
+                    element={
+                      <ResolveAuth>
+                        <ListScreen />
+                      </ResolveAuth>
+                    }
+                  />
                   <Route path='/login' element={<LoginScreen />} />
                   <Route path='/signup' element={<SignupScreen />} />
-                  <Route path='account' element={<AccountScreen />} />
+                  <Route
+                    path='account'
+                    element={
+                      <ResolveAuth>
+                        <AccountScreen />
+                      </ResolveAuth>
+                    }
+                  />
                   <Route
                     path='/transactions'
-                    element={<TransactionsScreen />}
+                    element={
+                      <ResolveAuth>
+                        <TransactionsScreen />
+                      </ResolveAuth>
+                    }
                   />
-                  <Route path='/portfolio' element={<PortfolioScreen />} />
-                  <Route path='/orders' element={<OrdersScreen />} />
-                  <Route path='stock/:ticker' element={<SingleStock />} />
+                  <Route
+                    path='/portfolio'
+                    element={
+                      <ResolveAuth>
+                        <PortfolioScreen />
+                      </ResolveAuth>
+                    }
+                  />
+                  <Route
+                    path='/orders'
+                    element={
+                      <ResolveAuth>
+                        <OrdersScreen />
+                      </ResolveAuth>
+                    }
+                  />
+                  <Route
+                    path='stock/:ticker'
+                    element={
+                      <ResolveAuth>
+                        <SingleStock />
+                      </ResolveAuth>
+                    }
+                  />
                 </Routes>
                 <Fab
                   sx={{

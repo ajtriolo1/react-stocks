@@ -44,7 +44,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      navigate('/charts');
+      navigate('/charts', { replace: true });
     }
   }, []);
 

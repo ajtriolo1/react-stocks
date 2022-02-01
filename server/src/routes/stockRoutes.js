@@ -5,6 +5,7 @@ const requireAuth = require('../middlewares/requireAuth');
 const moment = require('moment');
 const yahooFinance = require('yahoo-finance');
 const yahooFinance2 = require('yahoo-finance2').default;
+const path = require('path');
 
 const Stock = mongoose.model('Stock');
 const User = mongoose.model('User');
@@ -12,9 +13,9 @@ const Portfolio = mongoose.model('Portfolio');
 
 const router = express.Router();
 
-router.use(requireAuth);
+//router.use(requireAuth);
 
-router.get('/list', async (req, res) => {
+router.get('/api/list', requireAuth, async (req, res) => {
   const stocks = await Stock.find({ userId: req.user._id });
   const owned = await Portfolio.find({ userId: req.user._id });
   const startDate = moment().subtract(3, 'days').format('YYYY-MM-DD');
@@ -44,7 +45,7 @@ router.get('/list', async (req, res) => {
   );
 });
 
-router.get('/stocks', async (req, res) => {
+router.get('/api/stocks', requireAuth, async (req, res) => {
   const stocks = await Stock.find({ userId: req.user._id });
   const startDate = moment().subtract(6, 'months').format('YYYY-MM-DD');
   const endDate = moment().format('YYYY-MM-DD');
@@ -143,7 +144,7 @@ router.get('/stocks', async (req, res) => {
   res.send(results);
 });
 
-router.post('/stocks', async (req, res) => {
+router.post('/api/stocks', requireAuth, async (req, res) => {
   const { ticker } = req.body;
 
   if (!ticker) {
@@ -214,7 +215,7 @@ router.post('/stocks', async (req, res) => {
   }
 });
 
-router.get('/historical/:ticker', async (req, res) => {
+router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
   const ticker = req.params.ticker.trim();
 
   var results = {};
@@ -285,7 +286,7 @@ router.get('/historical/:ticker', async (req, res) => {
   res.send(results);
 });
 
-router.get('/quote/:ticker', (req, res) => {
+router.get('/api/quote/:ticker', requireAuth, (req, res) => {
   const ticker = req.params.ticker;
 
   yahooFinance.quote(
@@ -303,7 +304,7 @@ router.get('/quote/:ticker', (req, res) => {
   );
 });
 
-router.delete('/stocks/:ticker', async (req, res) => {
+router.delete('/api/stocks/:ticker', requireAuth, async (req, res) => {
   const ticker = req.params.ticker;
   await Stock.findOneAndDelete({
     userId: req.user._id,
@@ -312,7 +313,7 @@ router.delete('/stocks/:ticker', async (req, res) => {
   res.send(ticker);
 });
 
-router.get('/user-info', async (req, res) => {
+router.get('/api/user-info', requireAuth, async (req, res) => {
   const user = await User.find({ _id: req.user._id });
   const firstName = user[0].firstName;
   const lastName = user[0].lastName;
@@ -320,7 +321,7 @@ router.get('/user-info', async (req, res) => {
   res.send({ firstName, lastName, email });
 });
 
-router.put('/email', async (req, res) => {
+router.put('/api/email', requireAuth, async (req, res) => {
   const { newEmail } = req.body;
   try {
     await User.findByIdAndUpdate({ _id: req.user._id }, { email: newEmail });
@@ -330,7 +331,7 @@ router.put('/email', async (req, res) => {
   }
 });
 
-router.post('/autocomplete', async (req, res) => {
+router.post('/api/autocomplete', requireAuth, async (req, res) => {
   var { value } = req.body;
 
   value = value.trim();

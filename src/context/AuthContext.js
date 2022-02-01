@@ -39,7 +39,7 @@ const signup =
       await localStorage.setItem('token', res.data.token);
       dispatch({ type: 'signin', payload: res.data.token });
 
-      navigate('/charts');
+      navigate('/charts', { replace: true });
     } catch (err) {
       dispatch({
         type: 'add_error',
@@ -59,7 +59,7 @@ const signin =
       await localStorage.setItem('token', response.data.token);
       dispatch({ type: 'signin', payload: response.data.token });
 
-      navigate('/charts');
+      navigate('/charts', { replace: true });
     } catch (err) {
       dispatch({ type: 'add_error', payload: err.response.data.message });
     }
@@ -68,7 +68,7 @@ const signin =
 const signout = (dispatch) => async (navigate) => {
   await localStorage.removeItem('token');
   dispatch({ type: 'signout' });
-  navigate('/login');
+  navigate('/login', { replace: true });
 };
 
 const tryLocalSignin = (dispatch) => async (navigate) => {

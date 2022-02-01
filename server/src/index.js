@@ -12,7 +12,7 @@ const stockRoutes = require('./routes/stockRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const orderRoutes = require('./routes/orderRoutes');
-const requireAuth = require('./middlewares/requireAuth');
+const path = require('path');
 
 const app = express();
 
@@ -21,6 +21,8 @@ app.use(
     origin: '*',
   })
 );
+
+app.use(express.static(path.resolve(__dirname, '../../build')));
 
 app.use(bodyParser.json());
 app.use(authRoutes);
@@ -43,29 +45,16 @@ mongoose.connection.on('error', (err) => {
   console.error('Error connecting to mongo', err);
 });
 
-//create a server object:
-// app.get('*', (req, res) => {
-//   const ticker = req.query.ticker
-//   const startDate = req.query.startDate
-//   const endDate = req.query.endDate
-
-//   yahooFinance.historical(
-//     {
-//       symbol: ticker,
-//       from: startDate,
-//       to: endDate
-//     },
-//     function (err, quotes) {
-//       res.send(quotes); //write a response to the client
-//       res.end(); //end the response
-//     }
-//   );
-// });
-
-app.get('/', requireAuth, (req, res) => {
-  res.send(`Your email: ${req.user.email}`);
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../build', 'index.html'), (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
 });
 
-app.listen(8080, () => {
+const port = process.env.PORT || 8080;
+
+app.listen(port, () => {
   console.log('Listening on port 8080');
 });

@@ -2,15 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 const moment = require('moment');
+const path = require('path');
 
 const Order = mongoose.model('Order');
 const Portfolio = mongoose.model('Portfolio');
 
 const router = express.Router();
 
-router.use(requireAuth);
+//router.use(requireAuth);
 
-router.get('/orders', async (req, res) => {
+router.get('/api/orders', requireAuth, async (req, res) => {
   const orders = await Order.find({ userId: req.user._id });
 
   if (orders.length === 0) {
@@ -20,7 +21,7 @@ router.get('/orders', async (req, res) => {
   res.send(orders);
 });
 
-router.post('/order', async (req, res) => {
+router.post('/api/order', requireAuth, async (req, res) => {
   const { ticker, price, quantity, order_type, buy_sell } = req.body;
 
   if (!ticker || !price || !quantity || !order_type || !buy_sell) {
@@ -59,7 +60,7 @@ router.post('/order', async (req, res) => {
   }
 });
 
-router.delete('/order/:id', async (req, res) => {
+router.delete('/api/order/:id', requireAuth, async (req, res) => {
   const id = req.params.id;
   await Order.findOneAndDelete({
     _id: id,

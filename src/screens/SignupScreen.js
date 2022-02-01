@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -42,6 +42,12 @@ export default function SignupScreen() {
   const [passFilled, setPassFilled] = useState(false);
   const [passStarted, setPassStarted] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/charts');
+    }
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();

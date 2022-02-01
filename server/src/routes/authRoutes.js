@@ -5,7 +5,7 @@ const User = mongoose.model('User');
 
 const router = express.Router();
 
-router.post('/signup', async (req, res) => {
+router.post('/api/signup', async (req, res) => {
   const { email, password, firstName, lastName } = req.body;
 
   try {
@@ -19,7 +19,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-router.post('/signin', async (req, res) => {
+router.post('/api/signin', async (req, res) => {
   const { email, password } = req.body;
 
   if (!email && !password) {

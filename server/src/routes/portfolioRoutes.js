@@ -2,15 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 const yahooFinance = require('yahoo-finance');
+const path = require('path');
 
 const Portfolio = mongoose.model('Portfolio');
 const User = mongoose.model('User');
 
 const router = express.Router();
 
-router.use(requireAuth);
+//router.use(requireAuth);
 
-router.get('/portfolio', async (req, res) => {
+router.get('/api/portfolio', requireAuth, async (req, res) => {
   const portfolio = await Portfolio.find({ userId: req.user._id });
 
   if (portfolio.length === 0) {
@@ -26,7 +27,7 @@ router.get('/portfolio', async (req, res) => {
   res.send(result);
 });
 
-router.get('/portfolio/quotes', async (req, res) => {
+router.get('/api/portfolio/quotes', requireAuth, async (req, res) => {
   const portfolio = await Portfolio.find({ userId: req.user._id });
   let tickers = [];
 
@@ -53,12 +54,12 @@ router.get('/portfolio/quotes', async (req, res) => {
   );
 });
 
-router.get('/balance', async (req, res) => {
+router.get('/api/balance', requireAuth, async (req, res) => {
   const user = await User.findById(req.user._id);
   res.send(user);
 });
 
-router.post('/deposit', async (req, res) => {
+router.post('/api/deposit', requireAuth, async (req, res) => {
   const { amount } = req.body;
   const user = await User.findById(req.user._id);
   const bal = user.balance;
