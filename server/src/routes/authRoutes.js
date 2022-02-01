@@ -12,7 +12,7 @@ router.post('/api/signup', async (req, res) => {
     const user = new User({ email, password, firstName, lastName });
     await user.save();
 
-    const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
+    const token = jwt.sign({ userId: user._id }, process.env.API_SECRET);
     res.send({ token });
   } catch (err) {
     return res.status(422).send({ error: err.message });
@@ -39,7 +39,7 @@ router.post('/api/signin', async (req, res) => {
 
   try {
     await user.comparePassword(password);
-    const token = jwt.sign({ userId: user._id }, 'MY_SECRET_KEY');
+    const token = jwt.sign({ userId: user._id }, process.env.API_SECRET);
     res.send({ token });
   } catch (err) {
     res.status(422).send({ message: 'Invalid password or email' });

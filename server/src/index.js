@@ -13,6 +13,11 @@ const transactionRoutes = require('./routes/transactionRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+console.log();
 
 const app = express();
 
@@ -32,8 +37,7 @@ app.use(stockRoutes);
 app.use(orderRoutes);
 app.disable('etag');
 
-const mongoUri =
-  'mongodb+srv://admin:passwordpassword@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority';
+const mongoUri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority`;
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
 });
