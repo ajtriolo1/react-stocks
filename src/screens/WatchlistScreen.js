@@ -15,14 +15,15 @@ const WatchlistScreen = () => {
   return (
     <>
       <NavBar />
-      <Box display='flex' alignItems='center' marginY={'15px'} width='100%'>
+      <Box
+        display='flex'
+        width='100%'
+        alignItems={'center'}
+        justifyContent={'center'}
+        marginY={'15px'}
+      >
         <AddStock />
-        <ToggleButtonGroup
-          style={{ position: 'absolute', left: '46%' }}
-          value={display}
-          exclusive
-          onChange={handleChange}
-        >
+        <ToggleButtonGroup value={display} exclusive onChange={handleChange}>
           <ToggleButton value='chart'>Charts</ToggleButton>
           <ToggleButton value='list'>List</ToggleButton>
         </ToggleButtonGroup>

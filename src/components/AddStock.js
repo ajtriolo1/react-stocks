@@ -51,12 +51,12 @@ const AddStock = () => {
     <Box
       component='form'
       display='flex'
-      marginLeft={'10px'}
-      marginRight={'30px'}
+      position='absolute'
+      left={'10px'}
       onSubmit={(event) => onAddClick(event, term)}
     >
       <TextField
-        sx={{ mr: '10px' }}
+        sx={{ marginRight: '10px' }}
         label='Ticker Symbol'
         size='small'
         variant='outlined'
