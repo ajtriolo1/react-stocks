@@ -44,7 +44,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
-      navigate('/charts', { replace: true });
+      navigate('/watchlist', { replace: true });
     }
   }, []);
 

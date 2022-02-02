@@ -39,7 +39,7 @@ const signup =
       await localStorage.setItem('token', res.data.token);
       dispatch({ type: 'signin', payload: res.data.token });
 
-      navigate('/charts', { replace: true });
+      navigate('/watchlist', { replace: true });
     } catch (err) {
       dispatch({
         type: 'add_error',
@@ -59,7 +59,7 @@ const signin =
       await localStorage.setItem('token', response.data.token);
       dispatch({ type: 'signin', payload: response.data.token });
 
-      navigate('/charts', { replace: true });
+      navigate('/watchlist', { replace: true });
     } catch (err) {
       dispatch({ type: 'add_error', payload: err.response.data.message });
     }
@@ -95,7 +95,7 @@ const checkToken = (dispatch) => async (navigate, children) => {
     if (children) {
       return children;
     } else {
-      navigate('/charts');
+      navigate('/watchlist');
       return;
     }
   } else {

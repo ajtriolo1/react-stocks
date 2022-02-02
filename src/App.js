@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.css';
-import ChartScreen from './screens/ChartScreen';
 import { Provider as AuthProvider } from './context/AuthContext';
 import { Provider as StockProvider } from './context/StockContext';
 import { Provider as PortfolioProvider } from './context/PortfolioContext';
@@ -17,7 +16,6 @@ import SignupScreen from './screens/SignupScreen';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Fab } from '@mui/material';
-import ListScreen from './screens/ListScreen';
 import AccountScreen from './screens/AccountScreen';
 import TransactionsScreen from './screens/TransactionsScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
@@ -26,6 +24,7 @@ import SingleStock from './screens/SingleStock';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import WatchlistScreen from './screens/WatchlistScreen';
 
 function App() {
   const [dark, setDark] = useState(true);
@@ -59,18 +58,10 @@ function App() {
                 <Routes>
                   <Route path='/' element={<ResolveAuth />} />
                   <Route
-                    path='/charts'
+                    path='/watchlist'
                     element={
                       <ResolveAuth>
-                        <ChartScreen />
-                      </ResolveAuth>
-                    }
-                  />
-                  <Route
-                    path='/list'
-                    element={
-                      <ResolveAuth>
-                        <ListScreen />
+                        <WatchlistScreen />
                       </ResolveAuth>
                     }
                   />

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Context as StockContext } from '../context/StockContext';
 import { toast } from 'react-toastify';
@@ -48,32 +48,30 @@ const AddStock = () => {
   };
 
   return (
-    <Grid
-      container
+    <Box
       component='form'
+      display='flex'
+      marginLeft={'10px'}
+      marginRight={'30px'}
       onSubmit={(event) => onAddClick(event, term)}
     >
-      <Grid item>
-        <TextField
-          sx={{ margin: '10px' }}
-          label='Ticker Symbol'
-          size='small'
-          variant='outlined'
-          value={term}
-          onChange={(event) => setTerm(event.target.value.trim().toUpperCase())}
-        />
-      </Grid>
-      <Grid item alignItems='center' style={{ display: 'flex' }}>
-        <LoadingButton
-          variant='contained'
-          size='medium'
-          type='submit'
-          loading={loadingCharts}
-        >
-          Add Stock
-        </LoadingButton>
-      </Grid>
-    </Grid>
+      <TextField
+        sx={{ mr: '10px' }}
+        label='Ticker Symbol'
+        size='small'
+        variant='outlined'
+        value={term}
+        onChange={(event) => setTerm(event.target.value.trim().toUpperCase())}
+      />
+      <LoadingButton
+        variant='contained'
+        size='medium'
+        type='submit'
+        loading={loadingCharts}
+      >
+        Add Stock
+      </LoadingButton>
+    </Box>
   );
 };
 

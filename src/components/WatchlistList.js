@@ -12,11 +12,8 @@ import MuiAccordion from '@mui/material/Accordion';
 import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import React, { useContext, useEffect, useState } from 'react';
 import { Context as StockContext } from '../context/StockContext';
-import NavBar from '../components/NavBar';
-import AddStock from '../components/AddStock';
-import BuySellForm from '../components/BuySellForm';
+import BuySellForm from './BuySellForm';
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
-import { ToastContainer, toast } from 'react-toastify';
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -58,7 +55,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   borderTop: '1px solid rgba(0, 0, 0, .125)',
 }));
 
-const ListScreen = () => {
+const WatchlistList = () => {
   const {
     state: { stocksList, chartList },
     fetchList,
@@ -89,9 +86,7 @@ const ListScreen = () => {
   };
 
   return (
-    <Box display='flex' minHeight='100vh' flexDirection='column'>
-      <NavBar />
-      <AddStock />
+    <Box display='flex' flex={1} flexDirection='column'>
       {Object.entries(stocksList).length === 0 ? (
         <Box display='flex' margin='auto'>
           <CircularProgress sx={{ alignSelf: 'center' }} />
@@ -156,4 +151,4 @@ const ListScreen = () => {
   );
 };
 
-export default ListScreen;
+export default WatchlistList;

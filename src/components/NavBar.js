@@ -151,7 +151,7 @@ const NavBar = () => {
     <>
       <AppBar sx={{ width: 'auto' }} position='static'>
         <Toolbar>
-          <Button
+          {/* <Button
             sx={{ my: 2, color: 'white', display: 'block' }}
             key='charts'
             onClick={() => navigate('/charts')}
@@ -162,6 +162,13 @@ const NavBar = () => {
             sx={{ my: 2, color: 'white', display: 'block' }}
             key='list'
             onClick={() => navigate('/list')}
+          >
+            Watchlist
+          </Button> */}
+          <Button
+            sx={{ my: 2, color: 'white', display: 'block' }}
+            key='watchlist'
+            onClick={() => navigate('/watchlist')}
           >
             Watchlist
           </Button>

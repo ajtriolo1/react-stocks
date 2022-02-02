@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Context as StockContext } from '../context/StockContext';
 import { Box, CircularProgress, Grid, IconButton } from '@mui/material';
-import NavBar from '../components/NavBar';
-import AddStock from '../components/AddStock';
 import CancelSharpIcon from '@mui/icons-material/CancelSharp';
 
-const ChartScreen = () => {
+const WatchlistCharts = () => {
   const {
     state: { chartList },
     fetchStocks,
@@ -23,9 +21,7 @@ const ChartScreen = () => {
   };
 
   return (
-    <Box display='flex' minHeight='100vh' flexDirection={'column'}>
-      <NavBar />
-      <AddStock />
+    <Box display='flex' flex={1} flexDirection={'column'}>
       {chartList.length === 0 ? (
         <Box display='flex' sx={{ m: 'auto' }}>
           <CircularProgress sx={{ alignSelf: 'center' }} />
@@ -57,4 +53,4 @@ const ChartScreen = () => {
   );
 };
 
-export default ChartScreen;
+export default WatchlistCharts;
