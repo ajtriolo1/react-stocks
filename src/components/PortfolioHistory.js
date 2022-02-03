@@ -64,7 +64,7 @@ const PortfolioHistory = () => {
       flexDirection={'column'}
       textAlign={'center'}
       alignItems={'center'}
-      marginTop={'10px'}
+      marginTop={'15px'}
     >
       <Typography variant='h3'>Portfolio Value Plot</Typography>
       <Box

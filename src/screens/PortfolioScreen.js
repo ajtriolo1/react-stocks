@@ -202,8 +202,6 @@ const PortfolioScreen = () => {
           '& .zero': {
             color: 'gray',
           },
-          paddingBottom: 11,
-          width: '100%',
         }}
       >
         <DataGrid
