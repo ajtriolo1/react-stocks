@@ -22,12 +22,6 @@ const PortfolioHistory = () => {
 
   useEffect(() => {
     setLayout({
-      title: {
-        text: 'Portfolio Value',
-        font: {
-          color: theme.palette.text.primary,
-        },
-      },
       plot_bgcolor: theme.palette.background.default,
       paper_bgcolor: theme.palette.background.paper,
       xaxis: {
