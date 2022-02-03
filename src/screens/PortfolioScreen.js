@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import BuySellForm from '../components/BuySellForm';
+import PortfolioHistory from '../components/PortfolioHistory';
 
 const gainFormatter = (params) => {
   if (params.value < 0) {
@@ -202,6 +203,7 @@ const PortfolioScreen = () => {
             color: 'gray',
           },
           paddingBottom: 11,
+          width: '100%',
         }}
       >
         <DataGrid
@@ -227,7 +229,6 @@ const PortfolioScreen = () => {
           onRowClick={handleRowClick}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           pageSize={pageSize}
-          onCellClick={(item) => console.log(item)}
           getCellClassName={(params) => {
             if (params.field !== 'gains') {
               return '';
@@ -241,6 +242,7 @@ const PortfolioScreen = () => {
             }
           }}
         />
+        <PortfolioHistory />
       </Box>
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>

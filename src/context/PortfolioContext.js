@@ -33,7 +33,10 @@ const portfolioReducer = (state, action) => {
         portfolio: {},
         portfolioQuotes: {},
         balance: 0.0,
+        history: {},
       };
+    case 'get_history':
+      return { ...state, history: action.payload };
     default:
       return state;
   }
@@ -98,6 +101,14 @@ const resetPortfolio = (dispatch) => () => {
   dispatch({ type: 'reset' });
 };
 
+const getHistorical = (dispatch) => async (startDate, endDate) => {
+  const res = await stocksApi.post('/portfolio/history', {
+    startDate,
+    endDate,
+  });
+  dispatch({ type: 'get_history', payload: res.data });
+};
+
 export const { Provider, Context } = createDataContext(
   portfolioReducer,
   {
@@ -109,6 +120,13 @@ export const { Provider, Context } = createDataContext(
     fetchBalance,
     deposit,
     resetPortfolio,
+    getHistorical,
   },
-  { transactionList: [], portfolio: {}, portfolioQuotes: {}, balance: 0.0 }
+  {
+    transactionList: [],
+    portfolio: {},
+    portfolioQuotes: {},
+    balance: 0.0,
+    history: {},
+  }
 );

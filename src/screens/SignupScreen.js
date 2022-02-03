@@ -21,8 +21,8 @@ function Copyright(props) {
       {...props}
     >
       {'Copyright © '}
-      <Link color='inherit' href='https://mui.com/'>
-        Your Website
+      <Link color='inherit' href='https://github.com/ajtriolo1'>
+        Anthony Triolo
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -42,6 +42,10 @@ export default function SignupScreen() {
   const [passFilled, setPassFilled] = useState(false);
   const [passStarted, setPassStarted] = useState(false);
   const [btnDisabled, setBtnDisabled] = useState(true);
+  const [firstValue, setFirstValue] = useState('');
+  const [lastValue, setLastValue] = useState('');
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -85,74 +89,102 @@ export default function SignupScreen() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
-                error={!firstFilled && firstStarted}
-                autoComplete='given-name'
+                error={firstValue.length === 0 && firstStarted}
                 name='firstName'
                 required
                 fullWidth
                 id='firstName'
                 label='First Name'
-                onChange={(text) => {
-                  setFirstFilled(!!text.target.value.trim());
+                onChange={(event) => {
+                  setFirstValue(event.target.value);
                   setFirstStarted(true);
                 }}
-                onBlur={(text) => {
-                  setFirstFilled(!!text.target.value.trim());
-                  setFirstStarted(!text.target.value.trim());
-                  setBtnDisabled(!text.target.value.trim());
+                onBlur={(event) => {
+                  setFirstStarted(true);
                 }}
+                // onChange={(text) => {
+                //   setFirstFilled(!!text.target.value.trim());
+                //   setFirstStarted(true);
+                // }}
+                // onBlur={(text) => {
+                //   setFirstFilled(!!text.target.value.trim());
+                //   setFirstStarted(!text.target.value.trim());
+                //   setBtnDisabled(!text.target.value.trim());
+                // }}
                 helperText={
-                  firstFilled || !firstStarted ? '' : 'Invalid first name'
+                  firstValue.length !== 0 || !firstStarted
+                    ? ''
+                    : 'Invalid first name'
                 }
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                error={!lastFilled && lastStarted}
+                error={lastValue.length === 0 && lastStarted}
                 required
                 fullWidth
                 id='lastName'
                 label='Last Name'
                 name='lastName'
                 autoComplete='family-name'
-                onChange={(text) => {
-                  setLastFilled(!!text.target.value.trim());
+                onChangeCapture={(event) => {
+                  setLastValue(event.target.value);
                   setLastStarted(true);
                 }}
-                onBlur={(text) => {
-                  setLastFilled(!!text.target.value.trim());
-                  setLastStarted(!text.target.value.trim());
-                  setBtnDisabled(!text.target.value.trim());
+                onBlur={(event) => {
+                  setLastStarted(true);
                 }}
+                // onChange={(text) => {
+                //   setLastFilled(!!text.target.value.trim());
+                //   setLastStarted(true);
+                // }}
+                // onBlur={(text) => {
+                //   setLastFilled(!!text.target.value.trim());
+                //   setLastStarted(!text.target.value.trim());
+                //   setBtnDisabled(!text.target.value.trim());
+                // }}
                 helperText={
-                  lastFilled || !lastStarted ? '' : 'Invalid last name'
+                  lastValue.length !== 0 || !lastStarted
+                    ? ''
+                    : 'Invalid last name'
                 }
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                error={!emailFilled && emailStarted}
+                error={emailValue.length === 0 && emailStarted}
                 required
                 fullWidth
                 id='email'
                 label='Email Address'
                 name='email'
                 autoComplete='email'
-                onChange={(text) => {
-                  setEmailFilled(!!text.target.value.trim());
+                onChangeCapture={(event) => {
+                  setEmailValue(event.target.value);
                   setEmailStarted(true);
                 }}
-                onBlur={(text) => {
-                  setEmailFilled(!!text.target.value.trim());
-                  setEmailStarted(!text.target.value.trim());
-                  setBtnDisabled(!text.target.value.trim());
+                onBlur={(event) => {
+                  setEmailStarted(true);
                 }}
-                helperText={emailFilled || !emailStarted ? '' : 'Invalid email'}
+                // onChange={(text) => {
+                //   setEmailFilled(!!text.target.value.trim());
+                //   setEmailStarted(true);
+                // }}
+                // onBlur={(text) => {
+                //   setEmailFilled(!!text.target.value.trim());
+                //   setEmailStarted(!text.target.value.trim());
+                //   setBtnDisabled(!text.target.value.trim());
+                // }}
+                helperText={
+                  emailValue.length !== 0 || !emailStarted
+                    ? ''
+                    : 'Invalid email'
+                }
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                error={!passFilled && passStarted}
+                error={passwordValue.length === 0 && passStarted}
                 required
                 fullWidth
                 name='password'
@@ -160,17 +192,26 @@ export default function SignupScreen() {
                 type='password'
                 id='password'
                 autoComplete='new-password'
-                onChange={(text) => {
-                  setPassFilled(!!text.target.value.trim());
+                onChangeCapture={(event) => {
+                  setPasswordValue(event.target.value);
                   setPassStarted(true);
                 }}
-                onBlur={(text) => {
-                  setPassFilled(!!text.target.value.trim());
-                  setPassStarted(!text.target.value.trim());
-                  setBtnDisabled(!text.target.value.trim());
+                onBlur={(event) => {
+                  setPassStarted(true);
                 }}
+                // onChange={(text) => {
+                //   setPassFilled(!!text.target.value.trim());
+                //   setPassStarted(true);
+                // }}
+                // onBlur={(text) => {
+                //   setPassFilled(!!text.target.value.trim());
+                //   setPassStarted(!text.target.value.trim());
+                //   setBtnDisabled(!text.target.value.trim());
+                // }}
                 helperText={
-                  passFilled || !passStarted ? '' : 'Invalid password'
+                  passwordValue.length !== 0 || !passStarted
+                    ? ''
+                    : 'Invalid password'
                 }
               />
             </Grid>
@@ -181,11 +222,10 @@ export default function SignupScreen() {
             fullWidth
             variant='contained'
             disabled={
-              btnDisabled ||
-              !firstFilled ||
-              !lastFilled ||
-              !emailFilled ||
-              !passFilled
+              firstValue.length === 0 ||
+              lastValue.length === 0 ||
+              emailValue.length === 0 ||
+              passwordValue.length === 0
             }
             sx={{ mt: 3, mb: 2 }}
           >

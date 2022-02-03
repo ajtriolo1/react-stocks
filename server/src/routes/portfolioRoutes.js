@@ -5,6 +5,7 @@ const yahooFinance = require('yahoo-finance');
 const yahooFinance2 = require('yahoo-finance2').default;
 const path = require('path');
 const moment = require('moment');
+const { performance } = require('perf_hooks');
 
 const Portfolio = mongoose.model('Portfolio');
 const User = mongoose.model('User');
@@ -15,13 +16,13 @@ const router = express.Router();
 const enumerateBetweenDates = function (startDate, endDate) {
   var dates = [];
 
-  var currDate = moment(startDate, 'MM-DD-YYYY')
+  var currDate = moment(startDate, 'MM/DD/YYYY')
     .subtract(1, 'days')
     .startOf('day');
-  var lastDate = moment(endDate, 'MM-DD-YYYY').startOf('day');
+  var lastDate = moment(endDate, 'MM/DD/YYYY').add(1, 'days').startOf('day');
 
   while (currDate.add(1, 'days').diff(lastDate) < 0) {
-    dates.push(currDate.format('MMMM D YYYY'));
+    dates.push(currDate.format('YYYY-MM-DD'));
   }
 
   return dates;
@@ -44,18 +45,16 @@ router.get('/api/portfolio', requireAuth, async (req, res) => {
 });
 
 router.post('/api/portfolio/history', requireAuth, async (req, res) => {
-  const { endDate } = req.body;
+  const { startDate, endDate } = req.body;
   const tickers = await Transaction.distinct('ticker', {
     userId: req.user._id,
   });
 
   const transactions = await Transaction.find({ userId: req.user._id });
   const first = transactions[0];
-  const startDate = (startDate = moment(first['date'], 'MMMM Do YYYY').format(
-    'MM-DD-YYYY'
-  ));
+  const firstDate = moment(first['date'], 'MMMM Do YYYY').format('MM/DD/YYYY');
 
-  const dates = enumerateBetweenDates(startDate, endDate);
+  var dates = enumerateBetweenDates(firstDate, endDate);
   var values = [];
   var data = {};
   var currOwned = {};
@@ -65,73 +64,69 @@ router.post('/api/portfolio/history', requireAuth, async (req, res) => {
     currOwned[ticker] = 0;
   });
 
-  await tickers.reduce(async (memo, ticker) => {
-    await memo;
-    data[ticker] = await yahooFinance2.historical(ticker, {
-      period1: moment(startDate, 'MM-DD-YYYY').format('YYYY-MM-DD'),
-      period2: moment(endDate, 'MM-DD-YYYY').format('YYYY-MM-DD'),
-      interval: '1d',
-    });
-    currOwned[ticker] = 0;
-  }, undefined);
+  // await tickers.reduce(async (memo, ticker) => {
+  //   await memo;
+  //   data[ticker] = await yahooFinance2.historical(ticker, {
+  //     period1: moment(firstDate, 'MM-DD-YYYY').format('YYYY-MM-DD'),
+  //     period2: moment(endDate, 'MM-DD-YYYY')
+  //       .add(1, 'days')
+  //       .format('YYYY-MM-DD'),
+  //     interval: '1d',
+  //   });
+  //   currOwned[ticker] = 0;
+  // }, undefined);
 
-  await dates.reduce(async (memo, date) => {
-    await memo;
+  await Promise.all(
+    tickers.map(async (ticker) => {
+      data[ticker] = await yahooFinance2.historical(ticker, {
+        period1: moment(firstDate, 'MM/DD/YYYY').format('YYYY-MM-DD'),
+        period2: moment(endDate, 'MM/DD/YYYY')
+          .add(1, 'days')
+          .format('YYYY-MM-DD'),
+        interval: '1d',
+      });
+      currOwned[ticker] = 0;
+    })
+  );
+
+  // var allBuys = await Transaction.find({
+  //   userId: req.user._id,
+  //   transaction_type: 'buy',
+  // });
+
+  // var allSells = await Transaction.find({
+  //   userId: req.user._id,
+  //   transaction_type: 'sell',
+  // });
+
+  var allTransactions = await Transaction.find({
+    userId: req.user._id,
+  });
+
+  dates.forEach((date) => {
     var currValue = 0;
-    var month = date.split(' ')[0];
-    var day = date.split(' ')[1];
-    var year = date.split(' ')[2];
-    await tickers.reduce(async (memo, ticker) => {
-      await memo;
-      var bought = await Transaction.aggregate([
-        {
-          $match: {
-            userId: req.user._id,
-            ticker: ticker,
-            transaction_type: 'buy',
-            date: { $regex: `${month} ${day}.* ${year}` },
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            quantity: { $sum: '$quantity' },
-          },
-        },
-      ]);
-      if (bought.length === 0) {
-        bought = 0;
-      } else {
-        bought = bought[0]['quantity'];
-      }
-      var sold = await Transaction.aggregate([
-        {
-          $match: {
-            userId: req.user._id,
-            ticker: ticker,
-            transaction_type: 'sell',
-            date: { $regex: `${month} ${day}.* ${year}` },
-          },
-        },
-        {
-          $group: {
-            _id: null,
-            quantity: { $sum: '$quantity' },
-          },
-        },
-      ]);
-      if (sold.length === 0) {
-        sold = 0;
-      } else {
-        sold = sold[0]['quantity'];
-      }
+    tickers.forEach((ticker) => {
+      var bought = allTransactions.reduce((sum, buy) => {
+        return buy.transaction_type === 'buy' &&
+          buy.ticker === ticker &&
+          moment(buy.date, 'MMMM Do YYYY, h:mm:ss a').format('YYYY-MM-DD') ===
+            date
+          ? sum + parseInt(buy.quantity)
+          : sum;
+      }, 0);
+      var sold = allTransactions.reduce((sum, sell) => {
+        return sell.transaction_type === 'sell' &&
+          sell.ticker === ticker &&
+          moment(sell.date, 'MMMM Do YYYY, h:mm:ss a').format('YYYY-MM-DD') ===
+            date
+          ? sum + parseInt(sell.quantity)
+          : sum;
+      }, 0);
       var adjusted = bought - sold;
       currOwned[ticker] += adjusted;
-      var currDate = moment(
-        `${moment(date, 'MMMM D YYYY').format('YYYY-MM-DD')}T00:00:00.000Z`
-      ).toDate();
+      var currDate = moment(`${date}T00:00:00.000Z`).toDate();
       var matching = data[ticker].filter(
-        (quote) => Object.values(quote)[0].toString() === currDate.toString()
+        (quote) => quote.date.toString() === currDate.toString()
       );
       var price = 0;
       if (matching.length > 0) {
@@ -141,9 +136,17 @@ router.post('/api/portfolio/history', requireAuth, async (req, res) => {
       } else {
         currValue += currOwned[ticker] * prevPrices[ticker];
       }
-    }, undefined);
+    });
     values.push(currValue);
-  }, undefined);
+  });
+
+  var startIndex = dates.indexOf(
+    moment(startDate, 'MM/DD/YYYY').format('YYYY-MM-DD')
+  );
+  if (startIndex != -1) {
+    dates = dates.slice(startIndex);
+    values = values.slice(startIndex);
+  }
   res.send({ dates, values });
 });
 

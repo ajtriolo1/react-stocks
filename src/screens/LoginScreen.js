@@ -21,8 +21,8 @@ function Copyright(props) {
       {...props}
     >
       {'Copyright © '}
-      <Link color='inherit' href='https://mui.com/'>
-        Your Website
+      <Link color='inherit' href='https://github.com/ajtriolo1'>
+        Anthony Triolo
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -35,11 +35,10 @@ export default function LoginScreen() {
     state: { errorMessage },
     signin,
   } = useContext(AuthContext);
-  const [emailFilled, setEmailFilled] = useState(false);
-  const [passFilled, setPassFilled] = useState(false);
   const [emailStarted, setEmailStarted] = useState(false);
   const [passStarted, setPassStarted] = useState(false);
-  const [btnDisabled, setBtnDisabled] = useState(true);
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,29 +75,26 @@ export default function LoginScreen() {
         </Typography>
         <Box component='form' onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
-            error={!emailFilled && emailStarted}
+            error={emailValue.length === 0 && emailStarted}
             margin='normal'
             required
             fullWidth
             id='email'
             label='Email Address'
             name='email'
-            autoComplete='email'
-            onChange={(text) => {
-              setEmailFilled(!!text.target.value.trim());
+            value={emailValue}
+            onChange={(event) => {
+              setEmailValue(event.target.value);
               setEmailStarted(true);
             }}
-            onBlur={(text) => {
-              setEmailFilled(!!text.target.value.trim());
-              setEmailStarted(!text.target.value.trim());
-              setBtnDisabled(!text.target.value.trim());
-            }}
             helperText={
-              emailFilled || !emailStarted ? '' : 'Please enter a valid email'
+              emailValue.length !== 0 || !emailStarted
+                ? ''
+                : 'Please enter a valid email'
             }
           />
           <TextField
-            error={!passFilled && passStarted}
+            error={passwordValue.length === 0 && passStarted}
             margin='normal'
             required
             fullWidth
@@ -106,18 +102,15 @@ export default function LoginScreen() {
             label='Password'
             type='password'
             id='password'
-            autoComplete='current-password'
-            onChange={(text) => {
-              setPassFilled(!!text.target.value.trim());
+            value={passwordValue}
+            onChange={(event) => {
+              setPasswordValue(event.target.value);
               setPassStarted(true);
             }}
-            onBlur={(text) => {
-              setPassFilled(!!text.target.value.trim());
-              setPassStarted(!text.target.value.trim());
-              setBtnDisabled(!text.target.value.trim());
-            }}
             helperText={
-              passFilled || !passStarted ? '' : 'Please enter your password'
+              passwordValue.length !== 0 || !passStarted
+                ? ''
+                : 'Please enter your password'
             }
           />
           {errorMessage.form ? (
@@ -128,7 +121,7 @@ export default function LoginScreen() {
           <Button
             type='submit'
             fullWidth
-            disabled={btnDisabled || !emailFilled || !passFilled}
+            disabled={emailValue.length === 0 || passwordValue.length === 0}
             variant='contained'
             sx={{ mt: 3, mb: 2 }}
           >

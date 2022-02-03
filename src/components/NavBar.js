@@ -144,6 +144,7 @@ const NavBar = () => {
       return;
     }
     setSearching(false);
+    document.getElementById('single-stock-search').blur();
     navigate(`/stock/${tick.trim().toUpperCase()}`);
   };
 
