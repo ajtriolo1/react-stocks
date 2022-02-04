@@ -54,6 +54,7 @@ const BuySellForm = ({ stock, value, callback }) => {
             success: `Successfully bought ${data.get('quantity')} ${ticker}`,
             error: {
               render({ data }) {
+                getPortfolio();
                 return data;
               },
             },
@@ -66,6 +67,7 @@ const BuySellForm = ({ stock, value, callback }) => {
             success: `Successfully sold ${data.get('quantity')} ${ticker}`,
             error: {
               render({ data }) {
+                getPortfolio();
                 return data;
               },
             },
