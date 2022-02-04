@@ -110,6 +110,7 @@ const StockChart = ({ data, ticker }) => {
             y: prices,
             type: 'scatter',
             mode: 'lines',
+            connectgaps: true,
           },
         ]}
         style={{ width: '100%' }}

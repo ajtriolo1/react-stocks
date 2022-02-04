@@ -123,6 +123,7 @@ const PortfolioHistory = () => {
               y: history.values,
               type: 'scatter',
               mode: 'lines',
+              connectgaps: true,
             },
           ]}
           style={{ width: '1000px', height: '600px' }}

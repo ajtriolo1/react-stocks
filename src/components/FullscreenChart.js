@@ -199,6 +199,7 @@ const FullscreenChart = ({ data, ticker }) => {
             y: prices,
             type: 'scatter',
             mode: 'lines',
+            connectgaps: true,
           },
         ]}
         style={{ height: '100%', minHeight: 0 }}
