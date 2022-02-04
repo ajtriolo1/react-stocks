@@ -3,8 +3,13 @@ import certifi
 from pymongo import MongoClient
 import datetime as dt
 import time
+from dotenv import load_dotenv
 
-client = MongoClient('mongodb+srv://admin:passwordpassword@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority', tlsCAFile=certifi.where())
+load_dotenv()
+
+import os
+
+client = MongoClient('mongodb+srv://{}:{}@cluster0.my9iz.mongodb.net/StocksDatabase?retryWrites=true&w=majority'.format(os.environ.get('DB_USERNAME'), os.environ.get('DB_PASSWORD')), tlsCAFile=certifi.where())
 
 db=client.StocksDatabase
 
