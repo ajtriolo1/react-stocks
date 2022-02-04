@@ -19,6 +19,7 @@
     "google-finance": "^0.1.12",
     "http-proxy-middleware": "^2.0.2",
     "moment": "^2.29.1",
+    "moment-timezone": "^0.5.34",
     "nodemon": "^2.0.15",
     "plotly.js": "^2.8.0",
     "react": "^17.0.2",

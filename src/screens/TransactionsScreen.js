@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { Context as PortfolioContext } from '../context/PortfolioContext';
 import moment from 'moment';
+import 'moment-timezone';
 
 const columns = [
   { field: 'ticker', headerName: 'Stock', flex: 1 },
@@ -21,8 +22,15 @@ const columns = [
     headerName: 'Date',
     flex: 1,
     type: 'dateTime',
-    valueGetter: ({ value }) =>
-      value && moment(value, 'MMMM Do YYYY, h:mm:ss a').toDate(),
+    valueGetter: ({ value }) => {
+      return (
+        value &&
+        moment
+          .tz(value, 'MMMM Do YYYY, h:mm:ss a', 'America/New_York')
+          .tz(moment.tz.guess())
+          .toDate()
+      );
+    },
   },
 ];
 

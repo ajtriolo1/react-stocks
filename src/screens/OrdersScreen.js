@@ -93,7 +93,11 @@ const OrdersScreen = () => {
       type: 'dateTime',
       flex: 1,
       valueGetter: ({ value }) =>
-        value && moment(value, 'MMMM Do YYYY, h:mm:ss a').toDate(),
+        value &&
+        moment
+          .tz(value, 'MMMM Do YYYY, h:mm:ss a', 'America/New_York')
+          .tz(moment.tz.guess())
+          .toDate(),
     },
     {
       field: 'action',
