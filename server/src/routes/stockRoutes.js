@@ -58,6 +58,18 @@ router.get('/api/stocks', requireAuth, async (req, res) => {
     return res.send([]);
   }
 
+  const startDate =
+    moment
+      .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+      .diff(moment()) > 0
+      ? moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .subtract(1, 'days')
+          .format()
+      : moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .format();
+
   for (let i = 0; i < 25; i++) {
     try {
       await Promise.all(
@@ -65,17 +77,6 @@ router.get('/api/stocks', requireAuth, async (req, res) => {
           const shortname = await yahooFinance2.quoteSummary(ticker, {
             modules: ['quoteType'],
           });
-          const startDate =
-            moment(`${moment().format('YYYY-MM-DD')} 09:30`)
-              .tz('America/New_York')
-              .diff(moment()) > 0
-              ? moment(`${moment().format('YYYY-MM-DD')} 09:30`)
-                  .tz('America/New_York')
-                  .subtract(1, 'days')
-                  .format()
-              : moment(`${moment().format('YYYY-MM-DD')} 09:30`)
-                  .tz('America/New_York')
-                  .format();
           results[ticker] = {
             shortname: shortname['quoteType']['shortName'],
             '1d': await yahooFinance2._chart(
