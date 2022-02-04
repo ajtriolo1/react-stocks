@@ -97,7 +97,9 @@ router.post('/api/sell', requireAuth, async (req, res) => {
         : price * quantity,
     quantity,
     transaction_type: 'sell',
-    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    date: moment
+      .tz(moment(), 'America/New_York')
+      .format('MMMM Do YYYY, h:mm:ss a'),
   });
 
   //const newDoc = await Transaction.find({userId: req.user._id, ticker:ticker, transaction_type:'buy', owned:{$gt:0}})
@@ -131,6 +133,8 @@ router.post('/api/sell', requireAuth, async (req, res) => {
 
 router.post('/api/buy', requireAuth, async (req, res) => {
   const { ticker, price, quantity } = req.body;
+
+  console.log(req);
 
   if (!ticker || !price || !quantity) {
     return res
@@ -178,7 +182,9 @@ router.post('/api/buy', requireAuth, async (req, res) => {
         : price * quantity,
     transaction_type: 'buy',
     owned: quantity,
-    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    date: moment
+      .tz(moment(), 'America/New_York')
+      .format('MMMM Do YYYY, h:mm:ss a'),
   });
 
   try {

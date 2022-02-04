@@ -49,7 +49,7 @@ router.post('/api/order', requireAuth, async (req, res) => {
     quantity,
     buy_sell,
     order_type,
-    date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+    date: moment.tz('America/New_York').format('MMMM Do YYYY, h:mm:ss a'),
   });
 
   try {

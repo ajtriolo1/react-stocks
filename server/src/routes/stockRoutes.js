@@ -171,9 +171,19 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
 
   const results = {};
 
+  const startDate =
+    moment
+      .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+      .diff(moment()) > 0
+      ? moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .subtract(1, 'days')
+          .format()
+      : moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .format();
+
   try {
-    const startDate = moment().subtract(6, 'months').format('YYYY-MM-DD');
-    const endDate = moment().format('YYYY-MM-DD');
     const shortname = await yahooFinance2.quoteSummary(ticker, {
       modules: ['quoteType'],
     });
@@ -182,7 +192,7 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
       '1d': await yahooFinance2._chart(
         ticker,
         {
-          period1: moment().format('YYYY-MM-DD') + 'T14:30:00.000Z',
+          period1: startDate,
           period2: moment().format(),
           interval: '15m',
         },
@@ -191,7 +201,7 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
       '1wk': await yahooFinance2._chart(
         ticker,
         {
-          period1: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+          period1: moment(startDate).subtract(1, 'week').format('YYYY-MM-DD'),
           interval: '1h',
         },
         { validateResult: false }
@@ -199,7 +209,7 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
       '1mo': await yahooFinance2._chart(
         ticker,
         {
-          period1: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+          period1: moment(startDate).subtract(1, 'month').format('YYYY-MM-DD'),
           interval: '1d',
         },
         { validateResult: false }
@@ -207,7 +217,7 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
       '3mo': await yahooFinance2._chart(
         ticker,
         {
-          period1: moment().subtract(3, 'months').format('YYYY-MM-DD'),
+          period1: moment(startDate).subtract(3, 'months').format('YYYY-MM-DD'),
           interval: '1d',
         },
         { validateResult: false }
@@ -215,7 +225,7 @@ router.post('/api/stocks', requireAuth, async (req, res) => {
       '1yr': await yahooFinance2._chart(
         ticker,
         {
-          period1: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+          period1: moment(startDate).subtract(1, 'year').format('YYYY-MM-DD'),
           interval: '1d',
         },
         { validateResult: false }
@@ -242,7 +252,19 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
 
   var results = {};
 
-  for (let i = 0; i < 100; i++) {
+  const startDate =
+    moment
+      .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+      .diff(moment()) > 0
+      ? moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .subtract(1, 'days')
+          .format()
+      : moment
+          .tz(`${moment().format('YYYY-MM-DD')} 09:30`, 'America/New_York')
+          .format();
+
+  for (let i = 0; i < 25; i++) {
     try {
       const shortname = await yahooFinance2.quoteSummary(ticker, {
         modules: ['quoteType'],
@@ -252,7 +274,7 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
         '1d': await yahooFinance2._chart(
           ticker,
           {
-            period1: moment().format('YYYY-MM-DD') + 'T14:30:00.000Z',
+            period1: startDate,
             period2: moment().format(),
             interval: '15m',
           },
@@ -261,7 +283,7 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
         '1wk': await yahooFinance2._chart(
           ticker,
           {
-            period1: moment().subtract(1, 'week').format('YYYY-MM-DD'),
+            period1: moment(startDate).subtract(1, 'week').format('YYYY-MM-DD'),
             interval: '1h',
           },
           { validateResult: false }
@@ -269,7 +291,9 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
         '1mo': await yahooFinance2._chart(
           ticker,
           {
-            period1: moment().subtract(1, 'month').format('YYYY-MM-DD'),
+            period1: moment(startDate)
+              .subtract(1, 'month')
+              .format('YYYY-MM-DD'),
             interval: '1d',
           },
           { validateResult: false }
@@ -277,7 +301,9 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
         '3mo': await yahooFinance2._chart(
           ticker,
           {
-            period1: moment().subtract(3, 'months').format('YYYY-MM-DD'),
+            period1: moment(startDate)
+              .subtract(3, 'months')
+              .format('YYYY-MM-DD'),
             interval: '1d',
           },
           { validateResult: false }
@@ -285,7 +311,7 @@ router.get('/api/historical/:ticker', requireAuth, async (req, res) => {
         '1yr': await yahooFinance2._chart(
           ticker,
           {
-            period1: moment().subtract(1, 'year').format('YYYY-MM-DD'),
+            period1: moment(startDate).subtract(1, 'year').format('YYYY-MM-DD'),
             interval: '1d',
           },
           { validateResult: false }
