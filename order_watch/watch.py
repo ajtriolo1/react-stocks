@@ -2,6 +2,7 @@ import yfinance as yf
 import certifi
 from pymongo import MongoClient
 import datetime as dt
+import pytz
 import time
 from dotenv import load_dotenv
 
@@ -37,7 +38,7 @@ while(1):
                         'total':currentPrice*quantity, 
                         'transaction_type':'buy',
                         'owned': quantity,
-                        'date': dt.datetime.now().strftime('%B %e %Y, %H:%M:%S %p')
+                        'date': dt.datetime.now(pytz.timezone('US/Eastern')).strftime('%B %e %Y, %I:%M:%S %p').replace(' 0', ' ').replace('  ', ' ')
                     })
                     if portfolio == []:
                         portfolios.insert_one({
@@ -52,7 +53,7 @@ while(1):
                             'total': portfolio[0]['total'] + currentPrice*quantity
                         }})
                     orders.delete_one(order)
-                    print('Executed buy limit order for ', ticker)
+                    print('Executed buy limit order for', ticker)
             else:
                 if portfolio == [] or (quantity > portfolio[0]['quantity']):
                     orders.delete_one(order)
@@ -84,7 +85,7 @@ while(1):
                             'total':currentPrice*quantity, 
                             'transaction_type':'sell',
                             'owned': 0,
-                            'date': dt.datetime.now().strftime('%B %e %Y, %H:%M:%S %p')
+                            'date': dt.datetime.now(pytz.timezone('US/Eastern')).strftime('%B %e %Y, %I:%M:%S %p').replace(' 0', ' ').replace('  ', ' ')
                         })
                         newQuantity = portfolio[0]['quantity'] - quantity
                         if newQuantity == 0:
@@ -95,7 +96,7 @@ while(1):
                                 'total': newTotal
                             }})
                         orders.delete_one(order)
-                        print('Executed sell limit order for ', ticker)
+                        print('Executed sell limit order for', ticker)
     print('Sleeping...')
     time.sleep(60)
 
