@@ -117,7 +117,7 @@ router.get('/api/stocks', requireAuth, async (req, res) => {
       break;
     } catch (err) {
       setTimeout(() => {
-        console.log('error');
+        console.log(err);
       }, 1000);
     }
   }

@@ -5,7 +5,6 @@ const yahooFinance = require('yahoo-finance');
 const yahooFinance2 = require('yahoo-finance2').default;
 const path = require('path');
 const moment = require('moment');
-const { performance } = require('perf_hooks');
 
 const Portfolio = mongoose.model('Portfolio');
 const User = mongoose.model('User');
