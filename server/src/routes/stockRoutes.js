@@ -15,6 +15,21 @@ const router = express.Router();
 
 //router.use(requireAuth);
 
+router.get('/api/tickers', requireAuth, async (req, res) => {
+  const stocks = await Stock.find({ userId: req.user._id });
+  const tickers = [];
+
+  if (stocks.length === 0) {
+    return res.send([]);
+  }
+
+  stocks.forEach((stock) => {
+    tickers.push(stock.ticker);
+  });
+
+  res.send(tickers);
+});
+
 router.get('/api/list', requireAuth, async (req, res) => {
   const stocks = await Stock.find({ userId: req.user._id });
   const owned = await Portfolio.find({ userId: req.user._id });

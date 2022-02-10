@@ -5,23 +5,38 @@ import StockChart from '../components/StockChart';
 const stockReducer = (state, action) => {
   switch (action.type) {
     case 'fetch_stocks':
-      const tickers = Object.keys(action.payload);
-      const charts = [];
-      tickers.forEach((ticker) => {
-        charts.push(
-          <StockChart
-            id={ticker}
-            key={ticker}
-            ticker={ticker}
-            data={action.payload[ticker]}
-          />
-        );
-      });
+      const tickers = Object.keys(action.payload)[0];
+      const plot = (
+        <StockChart
+          id={tickers}
+          key={tickers}
+          ticker={tickers}
+          data={action.payload[tickers]}
+        />
+      );
       return {
         ...state,
-        chartList: charts,
-        tickerList: tickers,
+        chartList: [...state.chartList, plot],
+        tickerList: [...state.tickerList, tickers],
+        loadedCharts: true,
       };
+    // const tickers = Object.keys(action.payload);
+    // const charts = [];
+    // tickers.forEach((ticker) => {
+    //   charts.push(
+    //     <StockChart
+    //       id={ticker}
+    //       key={ticker}
+    //       ticker={ticker}
+    //       data={action.payload[ticker]}
+    //     />
+    //   );
+    // });
+    // return {
+    //   ...state,
+    //   chartList: charts,
+    //   tickerList: tickers,
+    // };
     case 'add_stock':
       const ticker = Object.keys(action.payload)[0];
       const chart = (
@@ -62,6 +77,7 @@ const stockReducer = (state, action) => {
         tickerList: [],
         singleStockHistorical: null,
         options: [],
+        loadedCharts: false,
       };
     case 'single_stock_hist':
       return { ...state, singleStockHistorical: action.payload };
@@ -77,14 +93,30 @@ const stockReducer = (state, action) => {
       return { ...state, options: action.payload };
     case 'reset_options':
       return { ...state, options: [] };
+    case 'set_charts_loaded':
+      return { ...state, loadedCharts: true };
     default:
       return state;
   }
 };
 
+// const fetchStocks = (dispatch) => async () => {
+//   const res = await stocksApi.get('/stocks');
+//   dispatch({ type: 'fetch_stocks', payload: res.data });
+// };
+
 const fetchStocks = (dispatch) => async () => {
-  const res = await stocksApi.get('/stocks');
-  dispatch({ type: 'fetch_stocks', payload: res.data });
+  const result = await stocksApi.get('/tickers');
+  const tickers = result.data;
+  if (tickers.length === 0) {
+    dispatch({ type: 'set_charts_loaded' });
+  }
+  await Promise.all(
+    tickers.map(async (ticker) => {
+      const res = await stocksApi.get(`/historical/${ticker}`);
+      dispatch({ type: 'fetch_stocks', payload: res.data });
+    })
+  );
 };
 
 const addStock = (dispatch) => async (ticker) => {
@@ -164,5 +196,6 @@ export const { Provider, Context } = createDataContext(
     singleStockHistorical: null,
     singleStockQuote: null,
     options: [],
+    loadedCharts: false,
   }
 );

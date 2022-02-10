@@ -11,17 +11,14 @@ import CancelSharpIcon from '@mui/icons-material/CancelSharp';
 
 const WatchlistCharts = () => {
   const {
-    state: { chartList },
+    state: { loadedCharts, chartList },
     fetchStocks,
     deleteStock,
   } = useContext(StockContext);
-  const [loading, setLoading] = useState(false);
 
   useEffect(async () => {
     if (chartList.length === 0) {
-      setLoading(true);
-      await fetchStocks();
-      setLoading(false);
+      fetchStocks();
     }
   }, []);
 
@@ -31,7 +28,7 @@ const WatchlistCharts = () => {
 
   return (
     <Box display='flex' flex={1} flexDirection={'column'}>
-      {loading ? (
+      {!loadedCharts ? (
         <Box display='flex' sx={{ m: 'auto' }}>
           <CircularProgress sx={{ alignSelf: 'center' }} />
         </Box>
