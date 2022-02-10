@@ -7,7 +7,13 @@ import {
   GridFooterContainer,
   GridFooter,
 } from '@mui/x-data-grid';
-import { IconButton, LinearProgress, Tooltip, Box } from '@mui/material';
+import {
+  IconButton,
+  LinearProgress,
+  Tooltip,
+  Box,
+  Typography,
+} from '@mui/material';
 import moment from 'moment';
 import RemoveCircleOutlineSharpIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -37,6 +43,17 @@ const CustomFooter = (props) => {
       </Tooltip>
       <GridFooter {...rest} />
     </GridFooterContainer>
+  );
+};
+
+const CustomNoRowsOverlay = () => {
+  return (
+    <GridOverlay>
+      <Typography>
+        You have not placed any limit orders. Once you do they will show up
+        here.
+      </Typography>
+    </GridOverlay>
   );
 };
 
@@ -139,6 +156,7 @@ const OrdersScreen = () => {
               <CustomFooter callback={handleRefresh} {...props} />
             ),
             LoadingOverlay: CustomLoadingOverlay,
+            NoRowsOverlay: CustomNoRowsOverlay,
           }}
         />
       </Box>

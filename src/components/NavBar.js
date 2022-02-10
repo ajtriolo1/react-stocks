@@ -17,6 +17,7 @@ import {
   CircularProgress,
   InputBase,
   Autocomplete,
+  Typography,
 } from '@mui/material';
 import { Context as AuthContext } from '../context/AuthContext';
 import { Context as StockContext } from '../context/StockContext';
@@ -26,6 +27,7 @@ import { AccountCircle } from '@mui/icons-material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
+import CloseIcon from '@mui/icons-material/Close';
 import { toast } from 'react-toastify';
 import { useTheme } from '@mui/styles';
 
@@ -82,7 +84,7 @@ const NavBar = () => {
   const [searchStock, setSearchStock] = useState('');
   const [searching, setSearching] = useState(false);
   const [open, setOpen] = useState(false);
-  const loading = open && options.length === 0;
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   useEffect(() => {
     fetchBalance();
@@ -152,20 +154,6 @@ const NavBar = () => {
     <>
       <AppBar sx={{ width: 'auto' }} position='static'>
         <Toolbar>
-          {/* <Button
-            sx={{ my: 2, color: 'white', display: 'block' }}
-            key='charts'
-            onClick={() => navigate('/charts')}
-          >
-            Charts
-          </Button>
-          <Button
-            sx={{ my: 2, color: 'white', display: 'block' }}
-            key='list'
-            onClick={() => navigate('/list')}
-          >
-            Watchlist
-          </Button> */}
           <Button
             sx={{ my: 2, color: 'white', display: 'block' }}
             key='watchlist'
@@ -214,7 +202,6 @@ const NavBar = () => {
                     setOpen(false);
                   }}
                   options={options}
-                  loading={loading}
                   filterOptions={(x) => x}
                   getOptionLabel={(option) => {
                     if (option.symbol) {
@@ -272,22 +259,6 @@ const NavBar = () => {
                   }}
                 />
               </Search>
-
-              {/* <Search>
-                <StyledInputBase
-                  value={searchStock}
-                  placeholder='Ticker...'
-                  onChange={(event) =>
-                    setSearchStock(event.target.value.toUpperCase())
-                  }
-                  startAdornment={<SearchIcon sx={{ ml: 2, mt: '2px' }} />}
-                  endAdornment={
-                    searching ? (
-                      <CircularProgress size={20} sx={{ marginRight: '5px' }} />
-                    ) : null
-                  }
-                />
-              </Search> */}
             </Box>
             <Link
               sx={{ mt: '1.5px', mr: '30px' }}
@@ -331,6 +302,7 @@ const NavBar = () => {
                 Transactions
               </MenuItem>
               <MenuItem onClick={() => navigate('/account')}>Account</MenuItem>
+              <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
               <MenuItem onClick={onSignoutClick}>
                 Logout
                 <LogoutIcon sx={{ ml: '5px' }} />
@@ -339,6 +311,50 @@ const NavBar = () => {
           </Box>
         </Toolbar>
       </AppBar>
+      <Dialog open={aboutOpen} sx={{ mb: 5 }}>
+        <DialogTitle>
+          <Box display='flex' alignItems='center'>
+            <Box flexGrow={1}>About</Box>
+            <Box>
+              <IconButton onClick={() => setAboutOpen(false)}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Box display='flex' flexDirection={'column'} maxWidth={'600px'}>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              This is a simulated stock trading app built in React.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              To buy or sell stocks, either add them to your watchlist and open
+              the list view or search for a stock using the search bar in the
+              top right.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              Your balance is displayed on the right side of the navigation bar.
+              Try clicking it to deposit funds.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              The watchlist is used to display trends and information about
+              stocks that you are interested in.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              The portfolio page displays information about stocks that you
+              currently own. You can buy or sell more of the stocks you have by
+              clicking on the stock within the table.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              The orders page displays any limit orders you have placed.
+            </Typography>
+            <Typography sx={{ textAlign: 'center', mb: 2 }}>
+              You can access all of the transactions you have made by visiting
+              the transactions page found in the user menu.
+            </Typography>
+          </Box>
+        </DialogContent>
+      </Dialog>
       <Dialog open={dialogOpen} sx={{ mb: 15 }}>
         <DialogTitle>
           <Box display='flex' alignItems='center'>

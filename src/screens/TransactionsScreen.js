@@ -37,7 +37,9 @@ const columns = [
 const CustomNoRowsOverlay = () => {
   return (
     <GridOverlay>
-      <Typography>You have not made a transaction</Typography>
+      <Typography>
+        You have not made any transactions. Once you do they will show up here
+      </Typography>
     </GridOverlay>
   );
 };

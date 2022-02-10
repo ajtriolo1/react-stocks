@@ -98,7 +98,10 @@ const columns = [
 const CustomNoRowsOverlay = () => {
   return (
     <GridOverlay>
-      <Typography>You have no stocks in your portfolio</Typography>
+      <Typography>
+        You have no stocks in your portfolio. Once you buy some they will show
+        up here.
+      </Typography>
     </GridOverlay>
   );
 };

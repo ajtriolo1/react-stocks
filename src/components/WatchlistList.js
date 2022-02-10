@@ -63,10 +63,16 @@ const WatchlistList = () => {
     deleteStock,
   } = useContext(StockContext);
   const [expanded, setExpanded] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (chartList.length === 0) {
       fetchStocks();
+    }
+    if (Object.entries(stocksList).length === 0) {
+      setLoading(true);
+      await fetchList();
+      setLoading(false);
     }
     fetchList();
     const interval = setInterval(() => {
@@ -87,9 +93,18 @@ const WatchlistList = () => {
 
   return (
     <Box display='flex' flex={1} flexDirection='column'>
-      {Object.entries(stocksList).length === 0 ? (
+      {loading ? (
         <Box display='flex' margin='auto'>
-          <CircularProgress sx={{ alignSelf: 'center' }} />
+          <CircularProgress sx={{ mb: 20 }} />
+        </Box>
+      ) : Object.entries(stocksList).length === 0 ? (
+        <Box display='flex' flexDirection={'column'} margin='auto'>
+          <Typography sx={{ textAlign: 'center', mb: 2 }}>
+            You don't have any stocks in your watchlist.
+          </Typography>
+          <Typography sx={{ mb: 20, textAlign: 'center' }}>
+            You can add some by entering a ticker symbol in the top left.
+          </Typography>
         </Box>
       ) : (
         <Box>

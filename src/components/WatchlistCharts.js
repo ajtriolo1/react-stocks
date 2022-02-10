@@ -1,6 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Context as StockContext } from '../context/StockContext';
-import { Box, CircularProgress, Grid, IconButton } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  IconButton,
+  Typography,
+} from '@mui/material';
 import CancelSharpIcon from '@mui/icons-material/CancelSharp';
 
 const WatchlistCharts = () => {
@@ -9,10 +15,13 @@ const WatchlistCharts = () => {
     fetchStocks,
     deleteStock,
   } = useContext(StockContext);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (chartList.length === 0) {
-      fetchStocks();
+      setLoading(true);
+      await fetchStocks();
+      setLoading(false);
     }
   }, []);
 
@@ -22,9 +31,18 @@ const WatchlistCharts = () => {
 
   return (
     <Box display='flex' flex={1} flexDirection={'column'}>
-      {chartList.length === 0 ? (
+      {loading ? (
         <Box display='flex' sx={{ m: 'auto' }}>
           <CircularProgress sx={{ alignSelf: 'center' }} />
+        </Box>
+      ) : chartList.length === 0 ? (
+        <Box display='flex' flexDirection={'column'} margin='auto'>
+          <Typography sx={{ textAlign: 'center', mb: 2 }}>
+            You don't have any stocks in your watchlist.
+          </Typography>
+          <Typography sx={{ mb: 20, textAlign: 'center' }}>
+            You can add some by entering a ticker symbol in the top left.
+          </Typography>
         </Box>
       ) : (
         <Grid container spacing={2}>

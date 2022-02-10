@@ -18,7 +18,7 @@ router.get('/api/transactions', requireAuth, async (req, res) => {
   const transactions = await Transaction.find({ userId: req.user._id });
 
   if (transactions.length === 0) {
-    res.send([]);
+    return res.send([]);
   }
 
   res.send(transactions);
