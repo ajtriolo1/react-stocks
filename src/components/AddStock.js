@@ -30,6 +30,7 @@ const AddStock = () => {
         error: {
           render({ data }) {
             setLoadingCharts(false);
+            clearOptions();
             return data;
           },
         },
