@@ -13,7 +13,7 @@ const StockChart = ({ data, ticker }) => {
   const shortname = data['shortname'];
   const [layout, setLayout] = useState({
     title: {
-      text: shortname,
+      text: `${shortname} - ${ticker}`,
       font: {
         color: theme.palette.text.primary,
       },
@@ -60,7 +60,7 @@ const StockChart = ({ data, ticker }) => {
   useEffect(() => {
     setLayout({
       title: {
-        text: shortname,
+        text: `${shortname} - ${ticker}`,
         font: {
           color: theme.palette.text.primary,
         },

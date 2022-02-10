@@ -35,7 +35,7 @@ const FullscreenChart = ({ data, ticker }) => {
   const intervals = ['1d', '1wk', '1mo', '3mo', '1yr'];
   const [layout, setLayout] = useState({
     title: {
-      text: shortname,
+      text: `${shortname} - ${ticker}`,
       font: {
         color: theme.palette.text.primary,
       },
@@ -93,7 +93,7 @@ const FullscreenChart = ({ data, ticker }) => {
   useEffect(() => {
     setLayout({
       title: {
-        text: shortname,
+        text: `${shortname} - ${ticker}`,
         font: {
           color: theme.palette.text.primary,
         },
