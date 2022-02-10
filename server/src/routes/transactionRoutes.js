@@ -134,8 +134,6 @@ router.post('/api/sell', requireAuth, async (req, res) => {
 router.post('/api/buy', requireAuth, async (req, res) => {
   const { ticker, price, quantity } = req.body;
 
-  console.log(req);
-
   if (!ticker || !price || !quantity) {
     return res
       .status(422)

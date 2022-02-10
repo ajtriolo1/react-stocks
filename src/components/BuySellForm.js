@@ -113,9 +113,9 @@ const BuySellForm = ({ stock, value, callback }) => {
     const required = price * quantity - balance;
     await deposit(required);
     const res = await toast.promise(
-      buyStock(ticker, price, parseInt(data.get('quantity'))),
+      buyStock(ticker, price, parseInt(quantity)),
       {
-        success: `Successfully bought ${data.get('quantity')} ${ticker}`,
+        success: `Successfully bought ${quantity} ${ticker}`,
         error: {
           render({ data }) {
             return data;
