@@ -19,6 +19,7 @@ const PortfolioHistory = () => {
     getHistorical,
   } = useContext(PortfolioContext);
   const [layout, setLayout] = useState({});
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     setLayout({
@@ -46,9 +47,23 @@ const PortfolioHistory = () => {
     setLoading(false);
     setStartDate(null);
     setEndDate(null);
-    setShowPlot(true);
+    setSubmitted(true);
     handleScroll();
   };
+
+  useEffect(() => {
+    if (history.values) {
+      if (history.values.length === 0) {
+        setShowPlot(false);
+        if (submitted) {
+          toast.error('Nothing to plot');
+          setSubmitted(false);
+        }
+      } else {
+        setShowPlot(true);
+      }
+    }
+  }, [JSON.stringify(history), submitted]);
 
   const handleScroll = () => {
     window.scroll({
@@ -122,7 +137,7 @@ const PortfolioHistory = () => {
               x: history.dates,
               y: history.values,
               type: 'scatter',
-              mode: 'lines',
+              mode: history.values.length === 1 ? 'lines+markers' : 'lines',
               connectgaps: true,
             },
           ]}

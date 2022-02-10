@@ -175,6 +175,13 @@ const NavBar = () => {
           >
             Orders
           </Button>
+          <Button
+            sx={{ my: 2, color: 'white', display: 'block' }}
+            key='transactions'
+            onClick={() => navigate('/transactions')}
+          >
+            Transactions
+          </Button>
           <Box
             sx={{
               display: 'flex',
@@ -298,9 +305,6 @@ const NavBar = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={() => navigate('/transactions')}>
-                Transactions
-              </MenuItem>
               <MenuItem onClick={() => navigate('/account')}>Account</MenuItem>
               <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
               <MenuItem onClick={onSignoutClick}>

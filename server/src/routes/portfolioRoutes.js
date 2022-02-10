@@ -50,6 +50,9 @@ router.post('/api/portfolio/history', requireAuth, async (req, res) => {
   });
 
   const transactions = await Transaction.find({ userId: req.user._id });
+  if (transactions.length === 0) {
+    return res.send({ dates: [], values: [] });
+  }
   const first = transactions[0];
   const firstDate = moment(first['date'], 'MMMM Do YYYY').format('MM/DD/YYYY');
 

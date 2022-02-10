@@ -127,6 +127,6 @@ export const { Provider, Context } = createDataContext(
     portfolio: {},
     portfolioQuotes: {},
     balance: 0.0,
-    history: {},
+    history: { dates: [], values: [] },
   }
 );
