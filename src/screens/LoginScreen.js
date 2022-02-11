@@ -57,16 +57,19 @@ export default function LoginScreen() {
   };
 
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component='main' maxWidth='sm'>
       <CssBaseline />
       <Box
         sx={{
-          marginTop: 8,
+          marginTop: 13,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
         }}
       >
+        <Typography variant='h3' sx={{ mb: 3 }} fontWeight={'bold'}>
+          React Stocks App
+        </Typography>
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <LockOutlinedIcon />
         </Avatar>
