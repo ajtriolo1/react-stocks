@@ -44,7 +44,10 @@ router.get('/api/portfolio', requireAuth, async (req, res) => {
 });
 
 router.post('/api/portfolio/history', requireAuth, async (req, res) => {
-  const { startDate, endDate } = req.body;
+  var { startDate, endDate } = req.body;
+  if (moment(endDate, 'MM/DD/YYYY').diff(moment()) > 0) {
+    endDate = moment().format('MM/DD/YYYY');
+  }
   const tickers = await Transaction.distinct('ticker', {
     userId: req.user._id,
   });
