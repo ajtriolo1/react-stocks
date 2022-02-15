@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Context as AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 function Copyright(props) {
   return (
@@ -40,6 +41,7 @@ export default function LoginScreen() {
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
   const navigate = useNavigate();
+  const theme = useTheme();
 
   useEffect(() => {
     if (localStorage.getItem('token')) {
@@ -57,17 +59,26 @@ export default function LoginScreen() {
   };
 
   return (
-    <Container component='main' maxWidth='sm'>
+    <Box
+      sx={{
+        backgroundImage: 'url(/financial-bg.jpg)',
+        height: '100%',
+      }}
+    >
       <CssBaseline />
       <Box
         sx={{
           marginTop: 13,
+          marginX: 'auto',
+          maxWidth: '700px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          backgroundColor: theme.palette.background.default,
+          borderRadius: 5,
         }}
       >
-        <Typography variant='h3' sx={{ mb: 3 }} fontWeight={'bold'}>
+        <Typography variant='h3' sx={{ mb: 3, mt: 3 }} fontWeight={'bold'}>
           Mock Trading App
         </Typography>
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
@@ -139,8 +150,8 @@ export default function LoginScreen() {
             </Grid>
           </Grid>
         </Box>
+        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Box>
-      <Copyright sx={{ mt: 8, mb: 4 }} />
-    </Container>
+    </Box>
   );
 }
