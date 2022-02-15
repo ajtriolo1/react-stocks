@@ -36,7 +36,11 @@ const PortfolioHistory = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (moment(data.get('start-date')).diff(moment(data.get('end-date'))) > 0) {
+    if (
+      moment(data.get('start-date'), 'MM/DD/YYYY').diff(
+        moment(data.get('end-date'), 'MM/DD/YYYY')
+      ) > 0
+    ) {
       toast.error('Start date must be before end date');
       return;
     }
