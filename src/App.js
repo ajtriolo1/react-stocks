@@ -46,7 +46,7 @@ function App() {
           <OrderProvider>
             <Router>
               <ThemeProvider theme={theme}>
-                <CssBaseline />
+                <CssBaseline enableColorScheme />
                 <ToastContainer
                   position='bottom-left'
                   autoClose={3000}
