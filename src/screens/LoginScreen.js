@@ -68,7 +68,7 @@ export default function LoginScreen() {
         }}
       >
         <Typography variant='h3' sx={{ mb: 3 }} fontWeight={'bold'}>
-          React Stocks App
+          Mock Trading App
         </Typography>
         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
           <LockOutlinedIcon />
